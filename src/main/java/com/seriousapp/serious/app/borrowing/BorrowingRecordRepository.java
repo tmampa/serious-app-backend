@@ -5,7 +5,6 @@ import com.seriousapp.serious.app.users.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,5 +12,4 @@ import java.util.Optional;
 public interface BorrowingRecordRepository extends JpaRepository<BorrowingRecord, Long> {
     Optional<BorrowingRecord> findByStudentAndBookAndReturnDateIsNull(Student student, Book book);
     List<BorrowingRecord> findByStudentAndReturnDateIsNull(Student student);
-    List<BorrowingRecord> findByReturnDateIsNullAndDueDateBefore(LocalDate date);
 }

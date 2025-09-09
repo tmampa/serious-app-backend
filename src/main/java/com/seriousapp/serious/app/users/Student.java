@@ -18,6 +18,12 @@ public class Student {
     private Long id;
     private String fullName;
     private Long studentNumber;
+    private String username;
+    private String password;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role = UserRole.STUDENT;
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Email> emails = new java.util.HashSet<>();
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
