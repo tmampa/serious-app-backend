@@ -7,6 +7,11 @@ import com.seriousapp.serious.app.borrowing.BorrowingRecordService;
 import com.seriousapp.serious.app.dto.BookRequest;
 import com.seriousapp.serious.app.dto.BorrowRecordResponse;
 import com.seriousapp.serious.app.dto.UserRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +22,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 @PreAuthorize("hasRole('ADMIN')")
+@Tag(name = "Admin", description = "Admin management API endpoints")
+@SecurityRequirement(name = "bearerAuth")
 public class AdminController {
     private final AdminService adminService;
     private final BookService bookService;
@@ -33,8 +40,18 @@ public class AdminController {
         this.studentService = studentService;
     }
 
+    @Operation(
+        summary = "Create a new book",
+        description = "Adds a new book to the library system"
+    )
+    @ApiResponse(responseCode = "200", description = "Book successfully created")
+    @ApiResponse(responseCode = "400", description = "Invalid book data provided")
+    @ApiResponse(responseCode = "401", description = "Unauthorized")
+    @ApiResponse(responseCode = "403", description = "Forbidden - requires ADMIN role")
     @PostMapping("/books")
-    public ResponseEntity<Book> createBook(@RequestBody BookRequest bookRequest) {
+    public ResponseEntity<Book> createBook(
+            @Parameter(description = "Book details", required = true)
+            @RequestBody BookRequest bookRequest) {
         Book book = new Book();
         book.setTitle(bookRequest.getTitle());
         book.setAuthor(bookRequest.getAuthor());
@@ -43,9 +60,18 @@ public class AdminController {
         return ResponseEntity.ok(bookService.saveBook(book));
     }
 
+    @Operation(
+        summary = "Create a borrowing record",
+        description = "Records a book borrowing transaction for a student"
+    )
+    @ApiResponse(responseCode = "200", description = "Borrowing record successfully created")
+    @ApiResponse(responseCode = "400", description = "Invalid request or book not available")
+    @ApiResponse(responseCode = "404", description = "Book or user not found")
     @PostMapping("/books/borrow/{bookTitle}")
     public ResponseEntity<BorrowRecordResponse> borrowBook(
+            @Parameter(description = "Title of the book to borrow", required = true)
             @PathVariable String bookTitle,
+            @Parameter(description = "User details", required = true)
             @RequestBody UserRequest userRequest) {
         BorrowRecordResponse response = adminService.createBorrowRecord(userRequest, bookTitle);
         return ResponseEntity.ok(response);
