@@ -156,7 +156,7 @@ public class StudentService {
         // Find active borrowing record
         BorrowingRecord record = this.borrowingRecordService
                 .findByStudentAndBookAndReturnDateIsNull(student, book)
-                .orElseThrow(() -> new RuntimeException("record not found"));
+                .orElseThrow(() -> new RuntimeException("record has been closed, no active borrowing found because book has been returned"));
 
 
         // Update return date
