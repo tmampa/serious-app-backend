@@ -1,6 +1,5 @@
 package com.seriousapp.serious.app.users;
 
-import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.dto.BorrowRecordResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
