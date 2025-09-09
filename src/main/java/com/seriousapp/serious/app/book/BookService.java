@@ -17,8 +17,8 @@ public class BookService {
         return bookRepository.findByTitle(name).orElse(null);
     }
 
-    public void saveBook(Book book) {
-        bookRepository.save(book);
+    public Book saveBook(Book book) {
+        return bookRepository.save(book);
     }
 
     public List<Book> getAllBooks() {

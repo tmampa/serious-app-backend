@@ -1,51 +1,67 @@
 package com.seriousapp.serious.app.users;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import com.seriousapp.serious.app.borrowing.BorrowingRecord;
+import com.seriousapp.serious.app.dto.BorrowRecordResponse;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
 
-import com.azure.storage.blob.BlobServiceClient;
-import com.seriousapp.serious.app.dto.UserRequest;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
-@RequestMapping("/student")
 @RestController
+@RequestMapping("/api/student")
+@PreAuthorize("hasRole('STUDENT')")
 public class StudentController {
+
     private final StudentService studentService;
-    private final BlobServiceClient blobServiceClient;
 
-    public StudentController(StudentService studentService, BlobServiceClient blobServiceClient) {
+    public StudentController(StudentService studentService) {
         this.studentService = studentService;
-        this.blobServiceClient = blobServiceClient;
     }
 
-    @PostMapping(value = "/borrow-book/{book_name}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE,
-            MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-    public void borrowBook(
-            @RequestBody UserRequest userRequest,
-            @PathVariable("book_name") String bookName,
-            @RequestParam("images") List<MultipartFile> images) throws IOException, IllegalAccessException {
-
-        this.studentService.borrowBook(userRequest, bookName, images);
+    @GetMapping("/profile")
+    public ResponseEntity<Student> getProfile(@AuthenticationPrincipal OidcUser principal) {
+        Student student = studentService.findByEmail(principal.getEmail());
+        return ResponseEntity.ok(student);
     }
 
-    @PostMapping("/return-book")
-    public void returnBook() {
+    @GetMapping("/borrowed-books")
+    public ResponseEntity<List<BorrowRecordResponse>> getBorrowedBooks(@AuthenticationPrincipal OidcUser principal) {
+        Student student = studentService.findByEmail(principal.getEmail());
+        List<BorrowRecordResponse> borrowedBooks = student.getBorrowedBooks().stream()
+            .map(record -> new BorrowRecordResponse(
+                record.getBook().getTitle(),
+                record.getBorrowDate(),
+                record.getDueDate(),
+                record.getReturnDate(),
+                record.getFineAmount()
+            ))
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(borrowedBooks);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Student>> getAllUsers() {
-        return ResponseEntity.ok(this.studentService.getAllUsers());
+    @GetMapping("/outstanding-fines")
+    public ResponseEntity<Map<String, Double>> getOutstandingFines(@AuthenticationPrincipal OidcUser principal) {
+        Student student = studentService.findByEmail(principal.getEmail());
+        return ResponseEntity.ok(Map.of("outstandingFines", student.getOutstandingFines()));
     }
 
-    @PostMapping("/settle-fines")
-    public ResponseEntity<?> settleFines() {
-        return ResponseEntity.ok("Fines settled successfully");
+    @GetMapping("/borrowing-history")
+    public ResponseEntity<List<BorrowRecordResponse>> getBorrowingHistory(@AuthenticationPrincipal OidcUser principal) {
+        Student student = studentService.findByEmail(principal.getEmail());
+        List<BorrowRecordResponse> history = student.getBorrowedBooks().stream()
+            .map(record -> new BorrowRecordResponse(
+                record.getBook().getTitle(),
+                record.getBorrowDate(),
+                record.getDueDate(),
+                record.getReturnDate(),
+                record.getFineAmount()
+            ))
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(history);
     }
 }

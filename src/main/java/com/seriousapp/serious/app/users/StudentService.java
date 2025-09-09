@@ -240,4 +240,20 @@ public class StudentService {
     public Student saveStudent(Student student) {
         return this.studentRepository.save(student);
     }
+
+    public Student findByEmail(String email) {
+        return this.studentRepository.findByEmail(email);
+    }
+
+    public Student findById(Long studentId) {
+        return this.studentRepository.findById(studentId).orElse(null);
+    }
+
+    @Transactional
+    public void clearFines(Long studentId) {
+        Student student = this.studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
+        student.setOutstandingFines(0);
+        this.studentRepository.save(student);
+    }
 }

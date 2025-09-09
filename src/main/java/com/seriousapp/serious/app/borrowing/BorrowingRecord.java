@@ -23,6 +23,7 @@ public class BorrowingRecord {
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
+    private double fineAmount;
 
     private LocalDate borrowDate;
     private LocalDate returnDate;

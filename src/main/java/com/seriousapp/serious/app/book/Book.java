@@ -29,9 +29,10 @@ public class Book {
     private double price;
     private String coverImageUrl;
     private String imagesURL;
-    private long stockQuantity;
+    private boolean available = true; // Default value to handle existing records
     private List<String> images = new java.util.ArrayList<>();
     private Set<String> tags = new java.util.HashSet<>();
+    private double stockQuantity;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
     private List<BorrowingRecord> borrowingRecords = new ArrayList<>();

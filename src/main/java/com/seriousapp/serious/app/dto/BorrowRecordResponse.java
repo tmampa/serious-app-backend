@@ -16,4 +16,17 @@ public class BorrowRecordResponse {
     private String bookTitle;
     private String author;
     private LocalDate borrowDate;
+    private LocalDate dueDate;
+    private LocalDate returnDate;
+    private double fineAmount;
+
+    public BorrowRecordResponse() {}
+
+    public BorrowRecordResponse(String title, LocalDate borrowDate, LocalDate dueDate, LocalDate returnDate, double fineAmount) {
+        this.bookTitle = title;
+        this.borrowDate = borrowDate;
+        this.dueDate = dueDate;
+        this.returnDate = returnDate;
+        this.fineAmount = fineAmount;
+    }
 }

@@ -15,4 +15,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query(value = "select * from student where student_number = :studentNumber", nativeQuery = true)
     Optional<Student> findByStudentNumber(@Param("studentNumber") Long studentNumber);
+
+    @Query("SELECT s FROM Student s JOIN s.emails e WHERE e.email = :email")
+    Student findByEmail(@Param("email") String email);
 }
