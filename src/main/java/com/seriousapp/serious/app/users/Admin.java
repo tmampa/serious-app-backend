@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "admin")
-public class Admin {
+public class Admin extends User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,5 +17,5 @@ public class Admin {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role = UserRole.ADMIN;
+    private UserRoles role = UserRoles.ADMIN;
 }

@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "student")
-public class Student {
+public class Student extends User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,7 +22,7 @@ public class Student {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role = UserRole.STUDENT;
+    private UserRoles role = UserRoles.STUDENT;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Email> emails = new java.util.HashSet<>();
