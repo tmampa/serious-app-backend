@@ -4,10 +4,12 @@ import com.seriousapp.serious.app.book.Book;
 import com.seriousapp.serious.app.book.BookService;
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.borrowing.BorrowingRecordService;
+import com.seriousapp.serious.app.contact.Email;
 import com.seriousapp.serious.app.dto.BookRequest;
 import com.seriousapp.serious.app.dto.BorrowRecordResponse;
 import com.seriousapp.serious.app.dto.UserRequest;
 import com.seriousapp.serious.app.users.student.Student;
+import com.seriousapp.serious.app.users.student.StudentRequest;
 import com.seriousapp.serious.app.users.student.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -110,5 +113,30 @@ public class AdminController {
     @PostMapping
     public void registerNewAdmin(Admin admin){
         adminService.addNewAdmin(admin);
+    }
+
+    @PostMapping("/create-student")
+    public ResponseEntity<?> registerNewStudent(@RequestBody StudentRequest studentRequest){
+        Student student = new Student();
+        Set<Email> emailSet = new java.util.HashSet<>();
+
+        student.setFullName(studentRequest.getFullName());
+        student.setStudentNumber(studentRequest.getStudentNumber());
+        student.setUsername(studentRequest.getUsername());
+        student.setPassword(studentRequest.getPassword());
+        student.setAddress(studentRequest.getAddress());
+        student.setOutstandingFines(studentRequest.getOutstandingFines());
+        studentRequest.getEmails().forEach(email -> {
+            Email newEmail = new Email();
+            newEmail.setEmail(email.getEmail());
+            newEmail.setStudent(student);
+            newEmail.setRelationship(email.getRelationship());
+            newEmail.setName(email.getName());
+            emailSet.add(newEmail);
+        });
+        student.setEmails(emailSet);
+        student.setPhoneNumbers(studentRequest.getPhoneNumbers());
+        var savedStudent = studentService.createStudent(student);
+        return ResponseEntity.ok(savedStudent);
     }
 }
