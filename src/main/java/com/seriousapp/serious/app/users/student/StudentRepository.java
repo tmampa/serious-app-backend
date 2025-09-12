@@ -1,4 +1,4 @@
-package com.seriousapp.serious.app.users;
+package com.seriousapp.serious.app.users.student;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

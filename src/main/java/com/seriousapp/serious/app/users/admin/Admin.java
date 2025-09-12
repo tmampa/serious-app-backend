@@ -1,5 +1,7 @@
-package com.seriousapp.serious.app.users;
+package com.seriousapp.serious.app.users.admin;
 
+import com.seriousapp.serious.app.users.User;
+import com.seriousapp.serious.app.users.UserRoles;
 import jakarta.persistence.*;
 import lombok.Data;
 

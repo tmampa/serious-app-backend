@@ -1,7 +1,7 @@
 package com.seriousapp.serious.app.borrowing;
 
 import com.seriousapp.serious.app.book.Book;
-import com.seriousapp.serious.app.users.Student;
+import com.seriousapp.serious.app.users.student.Student;
 import jakarta.persistence.*;
 import lombok.Data;
 

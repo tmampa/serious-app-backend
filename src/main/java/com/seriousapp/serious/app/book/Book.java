@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
-import com.seriousapp.serious.app.users.Student;
 
 import jakarta.persistence.*;
 import lombok.Data;

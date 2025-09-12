@@ -1,4 +1,4 @@
-package com.seriousapp.serious.app.users;
+package com.seriousapp.serious.app.users.admin;
 
 import com.seriousapp.serious.app.book.Book;
 import com.seriousapp.serious.app.book.BookService;
@@ -7,6 +7,8 @@ import com.seriousapp.serious.app.borrowing.BorrowingRecordService;
 import com.seriousapp.serious.app.dto.BookRequest;
 import com.seriousapp.serious.app.dto.BorrowRecordResponse;
 import com.seriousapp.serious.app.dto.UserRequest;
+import com.seriousapp.serious.app.users.student.Student;
+import com.seriousapp.serious.app.users.student.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -103,5 +105,10 @@ public class AdminController {
     public ResponseEntity<Void> clearStudentFines(@PathVariable Long studentId) {
         studentService.clearFines(studentId);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping
+    public void registerNewAdmin(Admin admin){
+        adminService.addNewAdmin(admin);
     }
 }

@@ -1,4 +1,4 @@
-package com.seriousapp.serious.app.users;
+package com.seriousapp.serious.app.users.student;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -9,9 +9,9 @@ import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.borrowing.BorrowingRecordService;
 import com.seriousapp.serious.app.contact.Email;
 import com.seriousapp.serious.app.contact.EmailService;
-import com.seriousapp.serious.app.contact.Phone;
-import org.hibernate.jpa.internal.ExceptionMapperLegacyJpaImpl;
+import com.seriousapp.serious.app.users.UserRoles;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.seriousapp.serious.app.book.Book;
@@ -44,18 +44,22 @@ public class StudentService {
     @Value("${computer.vision.key}")
     private String computerVisionKey;
     private final EmailService emailService;
-
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final BlobServiceClient blobServiceClient;
 
     public StudentService(
             StudentRepository studentRepository,
-            BookService bookService, BorrowingRecordService borrowingRecordService, EmailService emailService,
+            BookService bookService,
+            BorrowingRecordService borrowingRecordService,
+            EmailService emailService,
+            BCryptPasswordEncoder bCryptPasswordEncoder,
             BlobServiceClient blobServiceClient
     ) {
         this.studentRepository = studentRepository;
         this.bookService = bookService;
         this.borrowingRecordService = borrowingRecordService;
         this.emailService = emailService;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.blobServiceClient = blobServiceClient;
     }
 
@@ -255,5 +259,21 @@ public class StudentService {
                 .orElseThrow(() -> new RuntimeException("Student not found"));
         student.setOutstandingFines(0);
         this.studentRepository.save(student);
+    }
+
+    public Student createStudent(Student student) {
+        String encodedPassword = bCryptPasswordEncoder.encode(student.getPassword());
+        student.setPassword(encodedPassword);
+        return studentRepository.save(
+                new Student(
+                        UserRoles.STUDENT,
+                        student.getUsername(),
+                        student.getPassword()
+                )
+        );
+    }
+
+    public Student getStudentById(Long id) {
+        return studentRepository.findById(id).orElse(null);
     }
 }

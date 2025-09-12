@@ -1,4 +1,4 @@
-package com.seriousapp.serious.app.users;
+package com.seriousapp.serious.app.users.admin;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

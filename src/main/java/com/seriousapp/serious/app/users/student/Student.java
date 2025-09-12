@@ -1,4 +1,4 @@
-package com.seriousapp.serious.app.users;
+package com.seriousapp.serious.app.users.student;
 
 import java.util.*;
 
@@ -6,6 +6,8 @@ import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.contact.Email;
 import com.seriousapp.serious.app.contact.Phone;
 
+import com.seriousapp.serious.app.users.User;
+import com.seriousapp.serious.app.users.UserRoles;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -33,6 +35,14 @@ public class Student extends User {
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<BorrowingRecord> borrowedBooks = new ArrayList<>();
+
+    public Student() {}
+
+    public Student(UserRoles userRoles, String username, String password) {
+        this.role = userRoles;
+        this.username = username;
+        this.password = password;
+    }
 
     // Helper methods for bidirectional relationship
     public void addChild(Email email) {

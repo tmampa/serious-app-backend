@@ -1,40 +1,45 @@
 package com.seriousapp.serious.app.users;
 
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.http.ResponseEntity;
-import java.util.Map;
+import com.seriousapp.serious.app.jwt.token.AuthenticationResponse;
+import com.seriousapp.serious.app.users.student.StudentService;
+import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
+
+import javax.security.auth.login.AccountNotFoundException;
+import java.security.Principal;
 
 @RestController
+@RequestMapping("/api/auth")
+@AllArgsConstructor
 public class AuthController {
-
+    private final UserService userService;
     private final StudentService studentService;
 
-    public AuthController(StudentService studentService) {
-        this.studentService = studentService;
+    @PostMapping("/login")
+    public AuthenticationResponse login(@RequestBody User user) throws AccountNotFoundException {
+        return this.userService.authenticate(user);
+
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<Map<String, Object>> user(@AuthenticationPrincipal OidcUser principal) {
-        if (principal == null) {
-            return ResponseEntity.ok(Map.of("authenticated", false));
-        }
+    @GetMapping("/details")
+    public UserDetails getCurrentUser(Principal principal) {
+        return this.userService.loadUserByUsername(principal.getName());
+    }
 
-        // Create or update student based on Azure AD B2C information
-        Student student = new Student();
-        student.setFullName(principal.getName());
-        student.setStudentNumber(Long.parseLong(principal.getPreferredUsername().split("@")[0]));
+    @PutMapping("/{userId}/update-names")
+    public User updateNames(
+            @RequestBody User user,
+            @PathVariable("userId") Long userId
+    ) {
+        return this.userService.updateNames(user, userId);
+    }
 
-        // Save the student
-        studentService.saveStudent(student);
-
-        return ResponseEntity.ok(Map.of(
-            "authenticated", true,
-            "name", principal.getName(),
-            "email", principal.getEmail(),
-            "attributes", principal.getClaims()
-        ));
+    @PutMapping("/{userId}/update-password")
+    public User updatePassword(
+            @RequestBody User user,
+            @PathVariable("userId") Long userId
+    ) {
+        return this.userService.updatePassword(user, userId);
     }
 }

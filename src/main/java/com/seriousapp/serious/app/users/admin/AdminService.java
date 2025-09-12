@@ -1,4 +1,4 @@
-package com.seriousapp.serious.app.users;
+package com.seriousapp.serious.app.users.admin;
 
 import com.azure.ai.vision.imageanalysis.ImageAnalysisClient;
 import com.azure.ai.vision.imageanalysis.ImageAnalysisClientBuilder;
@@ -19,6 +19,8 @@ import com.seriousapp.serious.app.configurations.EmailConfiguration;
 import com.seriousapp.serious.app.contact.Email;
 import com.seriousapp.serious.app.dto.BorrowRecordResponse;
 import com.seriousapp.serious.app.dto.UserRequest;
+import com.seriousapp.serious.app.users.student.Student;
+import com.seriousapp.serious.app.users.student.StudentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -308,5 +310,13 @@ public class AdminService {
         html.append("<p>Dear Parent/Guardian,</p>");
         // ...rest of the HTML email content...
         return html.toString();
+    }
+
+    public void addNewAdmin(Admin admin) {
+        Optional<Admin> adminOptional = Optional.ofNullable(adminRepository.findByEmail(admin.getEmail()));
+        if (adminOptional.isPresent()){
+            throw new IllegalStateException("email taken");
+        }
+        adminRepository.save(admin);
     }
 }

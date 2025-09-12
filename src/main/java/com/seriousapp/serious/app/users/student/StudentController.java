@@ -1,4 +1,4 @@
-package com.seriousapp.serious.app.users;
+package com.seriousapp.serious.app.users.student;
 
 import com.seriousapp.serious.app.dto.BorrowRecordResponse;
 import io.swagger.v3.oas.annotations.Operation;

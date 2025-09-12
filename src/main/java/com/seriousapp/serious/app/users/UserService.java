@@ -6,6 +6,8 @@ import com.seriousapp.serious.app.jwt.token.AuthenticationResponse;
 import com.seriousapp.serious.app.jwt.token.Token;
 import com.seriousapp.serious.app.jwt.token.TokenRepository;
 import com.seriousapp.serious.app.jwt.token.TokenType;
+import com.seriousapp.serious.app.users.student.Student;
+import com.seriousapp.serious.app.users.student.StudentRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +21,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDate;
 
 @Service
 public class UserService implements UserDetailsService {
