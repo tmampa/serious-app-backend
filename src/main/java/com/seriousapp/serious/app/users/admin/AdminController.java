@@ -26,9 +26,9 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/admin")
-@PreAuthorize("hasRole('ADMIN')")
-@Tag(name = "Admin", description = "Admin management API endpoints")
-@SecurityRequirement(name = "bearerAuth")
+//@PreAuthorize("hasRole('ADMIN')")
+//@Tag(name = "Admin", description = "Admin management API endpoints")
+//@SecurityRequirement(name = "bearerAuth")
 public class AdminController {
     private final AdminService adminService;
     private final BookService bookService;
@@ -108,11 +108,6 @@ public class AdminController {
     public ResponseEntity<Void> clearStudentFines(@PathVariable Long studentId) {
         studentService.clearFines(studentId);
         return ResponseEntity.ok().build();
-    }
-
-    @PostMapping
-    public void registerNewAdmin(Admin admin){
-        adminService.addNewAdmin(admin);
     }
 
     @PostMapping("/create-student")

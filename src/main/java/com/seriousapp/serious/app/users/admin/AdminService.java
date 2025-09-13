@@ -323,7 +323,10 @@ public class AdminService {
                 new Admin(
                         UserRoles.ADMIN,
                         admin.getUsername(),
-                        admin.getPassword()
+                        admin.getPassword(),
+                        admin.getEmail(),
+                        admin.getFullName(),
+                        admin.getEmployeeId()
                 )
         );
     }

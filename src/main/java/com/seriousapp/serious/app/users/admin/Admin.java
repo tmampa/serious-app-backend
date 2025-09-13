@@ -28,4 +28,16 @@ public class Admin extends User {
         this.username = username;
         this.password = password;
     }
+
+    public Admin(UserRoles userRoles, String username, String password, String email) {
+        super(userRoles, username, password);
+        this.email = email;
+    }
+
+    public Admin(UserRoles userRoles, String username, String password, String email, String fullName, String employeeId) {
+        super(userRoles, username, password);
+        this.email = email;
+        this.fullName = fullName;
+        this.employeeId = employeeId;
+    }
 }
