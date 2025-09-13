@@ -19,10 +19,12 @@ import com.seriousapp.serious.app.configurations.EmailConfiguration;
 import com.seriousapp.serious.app.contact.Email;
 import com.seriousapp.serious.app.dto.BorrowRecordResponse;
 import com.seriousapp.serious.app.dto.UserRequest;
+import com.seriousapp.serious.app.users.UserRoles;
 import com.seriousapp.serious.app.users.student.Student;
 import com.seriousapp.serious.app.users.student.StudentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +43,7 @@ public class AdminService {
     private final BorrowingRecordService borrowingRecordService;
     private final BlobServiceClient blobServiceClient;
     private final EmailConfiguration emailConfiguration;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Value("${computer.vision.endpoint}")
     private String computerVisionEndpoint;
@@ -48,17 +51,18 @@ public class AdminService {
     private String computerVisionKey;
 
     public AdminService(AdminRepository adminRepository,
-                       BookService bookService,
-                       StudentService studentService,
-                       BorrowingRecordService borrowingRecordService,
-                       BlobServiceClient blobServiceClient,
-                       EmailConfiguration emailConfiguration) {
+                        BookService bookService,
+                        StudentService studentService,
+                        BorrowingRecordService borrowingRecordService,
+                        BlobServiceClient blobServiceClient,
+                        EmailConfiguration emailConfiguration, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.adminRepository = adminRepository;
         this.bookService = bookService;
         this.studentService = studentService;
         this.borrowingRecordService = borrowingRecordService;
         this.blobServiceClient = blobServiceClient;
         this.emailConfiguration = emailConfiguration;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public Admin findByEmail(String email) {
@@ -312,11 +316,15 @@ public class AdminService {
         return html.toString();
     }
 
-    public void addNewAdmin(Admin admin) {
-        Optional<Admin> adminOptional = Optional.ofNullable(adminRepository.findByEmail(admin.getEmail()));
-        if (adminOptional.isPresent()){
-            throw new IllegalStateException("email taken");
-        }
-        adminRepository.save(admin);
+    public Admin createAdmin(Admin admin) {
+        String encodedPassword = this.bCryptPasswordEncoder.encode(admin.getPassword());
+        admin.setPassword(encodedPassword);
+        return adminRepository.save(
+                new Admin(
+                        UserRoles.ADMIN,
+                        admin.getUsername(),
+                        admin.getPassword()
+                )
+        );
     }
 }

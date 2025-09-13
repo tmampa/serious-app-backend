@@ -20,4 +20,12 @@ public class Admin extends User {
 
     @Enumerated(EnumType.STRING)
     private UserRoles role = UserRoles.ADMIN;
+
+    public Admin() {}
+
+    public Admin(UserRoles userRoles, String username, String password) {
+        this.role = userRoles;
+        this.username = username;
+        this.password = password;
+    }
 }

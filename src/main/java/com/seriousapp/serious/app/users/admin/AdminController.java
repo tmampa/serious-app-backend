@@ -139,4 +139,16 @@ public class AdminController {
         var savedStudent = studentService.createStudent(student);
         return ResponseEntity.ok(savedStudent);
     }
+
+    @PostMapping("/create-admin")
+    public ResponseEntity<?> registerNewAdmin(@RequestBody AdminRequest adminRequest){
+        Admin admin = new Admin();
+        admin.setFullName(adminRequest.getFullName());
+        admin.setUsername(adminRequest.getUsername());
+        admin.setPassword(adminRequest.getPassword());
+        admin.setEmail(adminRequest.getEmail());
+        admin.setEmployeeId(adminRequest.getEmployeeId());
+        var savedAdmin = adminService.createAdmin(admin);
+        return ResponseEntity.ok(savedAdmin);
+    }
 }
