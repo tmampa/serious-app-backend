@@ -39,7 +39,7 @@ public class AuthController {
                     )
             );
         } catch (AuthenticationException e) {
-            log.error("Authentication failed for user: " + loginRequest.getUsername(), e);
+            log.error("Authentication failed for user: {}", loginRequest.getUsername(), e);
             throw new RuntimeException(e);
         }
 

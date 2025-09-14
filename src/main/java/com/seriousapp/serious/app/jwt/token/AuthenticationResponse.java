@@ -1,7 +1,6 @@
 package com.seriousapp.serious.app.jwt.token;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.seriousapp.serious.app.users.UserRoles;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

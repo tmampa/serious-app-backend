@@ -6,7 +6,6 @@ import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.contact.Email;
 
 import com.seriousapp.serious.app.users.User;
-import com.seriousapp.serious.app.users.UserRoles;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -2,8 +2,6 @@ package com.seriousapp.serious.app.users.student;
 
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.contact.Email;
-import com.seriousapp.serious.app.contact.Phone;
-import com.seriousapp.serious.app.users.UserRoles;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;

@@ -1,7 +1,6 @@
 package com.seriousapp.serious.app.users.student;
 
 import com.seriousapp.serious.app.contact.Email;
-import com.seriousapp.serious.app.contact.Phone;
 import lombok.Data;
 
 import java.util.Set;

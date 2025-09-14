@@ -3,7 +3,6 @@ package com.seriousapp.serious.app.dto;
 import java.util.Set;
 
 import com.seriousapp.serious.app.contact.Email;
-import com.seriousapp.serious.app.contact.Phone;
 
 import lombok.Data;
 

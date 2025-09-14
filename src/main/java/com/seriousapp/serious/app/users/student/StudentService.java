@@ -9,7 +9,6 @@ import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.borrowing.BorrowingRecordService;
 import com.seriousapp.serious.app.contact.Email;
 import com.seriousapp.serious.app.contact.EmailService;
-import com.seriousapp.serious.app.users.UserRoles;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
