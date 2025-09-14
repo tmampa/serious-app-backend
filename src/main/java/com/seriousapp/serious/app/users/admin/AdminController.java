@@ -71,7 +71,7 @@ public class AdminController {
     )
     @ApiResponse(responseCode = "200", description = "Borrowing record successfully created")
     @ApiResponse(responseCode = "400", description = "Invalid request or book not available")
-    @ApiResponse(responseCode = "404", description = "Book or user not found")
+    @ApiResponse(responseCode = "404", description = "Book or userPrincipal not found")
     @PostMapping("/books/borrow/{bookTitle}")
     public ResponseEntity<BorrowRecordResponse> borrowBook(
             @Parameter(description = "Title of the book to borrow", required = true)
@@ -115,7 +115,7 @@ public class AdminController {
         Student student = new Student();
         Set<Email> emailSet = new java.util.HashSet<>();
 
-        student.setFullName(studentRequest.getFullName());
+        //student.setFullName(studentRequest.getFullName());
         student.setStudentNumber(studentRequest.getStudentNumber());
         student.setUsername(studentRequest.getUsername());
         student.setPassword(studentRequest.getPassword());
@@ -130,7 +130,7 @@ public class AdminController {
             emailSet.add(newEmail);
         });
         student.setEmails(emailSet);
-        student.setPhoneNumbers(studentRequest.getPhoneNumbers());
+       // student.setPhoneNumbers(studentRequest.getPhoneNumbers());
         var savedStudent = studentService.createStudent(student);
         return ResponseEntity.ok(savedStudent);
     }
@@ -138,7 +138,7 @@ public class AdminController {
     @PostMapping("/create-admin")
     public ResponseEntity<?> registerNewAdmin(@RequestBody AdminRequest adminRequest){
         Admin admin = new Admin();
-        admin.setFullName(adminRequest.getFullName());
+        //admin.setFullName(adminRequest.getFullName());
         admin.setUsername(adminRequest.getUsername());
         admin.setPassword(adminRequest.getPassword());
         admin.setEmail(adminRequest.getEmail());

@@ -75,7 +75,7 @@ public class StudentService {
                 .or(() -> this.studentRepository.findByStudentNumber(userRequest.getStudentNumber()))
                 .orElse(new Student());
 
-        student.setFullName(userRequest.getFullName());
+        //student.setFullName(userRequest.getFullName());
         student.setStudentNumber(userRequest.getStudentNumber());
         // Use safe collection replacement methods
         //student.re(userRequest.getEmails());
@@ -198,7 +198,7 @@ public class StudentService {
                 .orElse(new Student());
 
         // Update basic student information
-        student.setFullName(userRequest.getFullName());
+        //student.setFullName(userRequest.getFullName());
         student.setStudentNumber(userRequest.getStudentNumber());
         student.setAddress(userRequest.getAddress());
         student.setOutstandingFines(0);
@@ -266,9 +266,14 @@ public class StudentService {
         student.setPassword(encodedPassword);
         return studentRepository.save(
                 new Student(
-                        UserRoles.STUDENT,
                         student.getUsername(),
-                        student.getPassword()
+                        student.getEmail(),
+                        student.getPassword(),
+                        student.getFirstNames(),
+                        student.getLastName(),
+                        student.getAddress(),
+                        student.getOutstandingFines(),
+                        student.getStudentNumber()
                 )
         );
     }

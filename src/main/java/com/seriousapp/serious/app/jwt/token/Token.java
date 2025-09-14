@@ -1,6 +1,5 @@
 package com.seriousapp.serious.app.jwt.token;
 
-import com.seriousapp.serious.app.users.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,7 +22,5 @@ public class Token {
     public TokenType tokenType = TokenType.BEARER;
     public boolean revoked;
     public boolean expired;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    public User user;
+    public Long userPrincipalId;
 }

@@ -28,7 +28,7 @@ public class Book {
     private double price;
     private String coverImageUrl;
     private String imagesURL;
-    private boolean available = true; // Default value to handle existing records
+    private boolean available = true;
     private List<String> images = new java.util.ArrayList<>();
     private Set<String> tags = new java.util.HashSet<>();
     private double stockQuantity;

@@ -2,96 +2,47 @@ package com.seriousapp.serious.app.users;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.time.LocalDateTime;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
 @Data
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "users")
-public class User implements UserDetails {
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
+public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(updatable = false, unique = true, name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(length = 25, name = "first_name")
-    private String firstName;
-    @Column(length = 25, name = "last_name")
-    private String lastName;
-    @Column(unique = true, nullable = false, name = "email")
+
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(unique = true, nullable = false)
     private String email;
-    @Column(nullable = false, name = "password")
+
+    @Column(nullable = false)
     private String password;
-    @Column(name = "phone")
-    private Long phone;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private UserRoles role;
-    @Column(name = "display_picture_url")
-    private String displayPictureURL;
-    @Column(name = "description")
-    private String description;
 
-    public User(UserRoles role, String username, String password) {
-        this.role = role;
-        this.email = username;
+    @Column(name = "user_type", insertable = false, updatable = false)
+    private String userType;
+
+    private boolean enabled = true;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    // Constructors, getters, setters
+    public User() {}
+
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
         this.password = password;
     }
-
-    public User(
-            String firstName,
-            String lastName,
-            UserRoles userRoles,
-            String username,
-            String password
-    ) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.role = userRoles;
-        this.email = username;
-        this.password = password;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(role);
-    }
-
-    @Override
-    public String getUsername() {
-        return this.email;
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
 }

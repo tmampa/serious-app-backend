@@ -19,7 +19,6 @@ import com.seriousapp.serious.app.configurations.EmailConfiguration;
 import com.seriousapp.serious.app.contact.Email;
 import com.seriousapp.serious.app.dto.BorrowRecordResponse;
 import com.seriousapp.serious.app.dto.UserRequest;
-import com.seriousapp.serious.app.users.UserRoles;
 import com.seriousapp.serious.app.users.student.Student;
 import com.seriousapp.serious.app.users.student.StudentService;
 import lombok.extern.slf4j.Slf4j;
@@ -97,7 +96,7 @@ public class AdminService {
 
             borrowRecordResponse.setId(createdRecord.getId());
             borrowRecordResponse.setStudentId(student.getId());
-            borrowRecordResponse.setStudentName(student.getFullName());
+            //borrowRecordResponse.setStudentName(student.getFullName());
             borrowRecordResponse.setStudentNumber(student.getStudentNumber().toString());
             borrowRecordResponse.setBookId(book.getId());
             borrowRecordResponse.setBookTitle(book.getTitle());
@@ -161,7 +160,7 @@ public class AdminService {
 
         String containerNameBase = String.format("%s-%s-%d-%s-%s",
             bookBeingReturned.getBook().getTitle(),
-            bookBeingReturned.getStudent().getFullName(),
+            //bookBeingReturned.getStudent().getFullName(),
             bookBeingReturned.getStudent().getStudentNumber(),
             LocalDate.now(),
             System.currentTimeMillis()
@@ -257,11 +256,11 @@ public class AdminService {
                 .toList();
 
         if (parentEmails.isEmpty()) {
-            log.warn("No parent emails found for student: {}", student.getFullName());
+            log.warn("No parent emails found for student: {}", student);
             return;
         }
 
-        String subject = String.format("%s has borrowed %s", student.getFullName(), book.getTitle());
+        String subject = String.format("%s has borrowed %s", student.getStudentNumber(), book.getTitle());
         String plainText = createBorrowEmailPlainText(student, book, record, imagesURLS);
         String htmlText = createBorrowEmailHtml(student, book, record, imagesURLS);
 
@@ -276,11 +275,11 @@ public class AdminService {
                 .toList();
 
         if (parentEmails.isEmpty()) {
-            log.warn("No parent emails found for student: {}", student.getFullName());
+            log.warn("No parent emails found for student: {}", student.getStudentNumber());
             return;
         }
 
-        String subject = String.format("%s has returned %s", student.getFullName(), book.getTitle());
+        String subject = String.format("%s has returned %s", student.getStudentNumber(), book.getTitle());
         String plainText = createReturnEmailPlainText(student, book, imagesURLS, amountOwed, damages);
         String htmlText = createReturnEmailHtml(student, book, imagesURLS, amountOwed, damages);
 
@@ -317,15 +316,21 @@ public class AdminService {
     }
 
     public Admin createAdmin(Admin admin) {
+        String rawPassword = "myPassword123";
+        String encoded = this.bCryptPasswordEncoder.encode(rawPassword);
+        boolean matches = this.bCryptPasswordEncoder.matches(rawPassword, encoded);
+        log.info("Password matches: {}", matches);
+
         String encodedPassword = this.bCryptPasswordEncoder.encode(admin.getPassword());
         admin.setPassword(encodedPassword);
+
+        log.info("admin obj before saving: {}", admin);
+
         return adminRepository.save(
                 new Admin(
-                        UserRoles.ADMIN,
                         admin.getUsername(),
-                        admin.getPassword(),
                         admin.getEmail(),
-                        admin.getFullName(),
+                        admin.getPassword(),
                         admin.getEmployeeId()
                 )
         );

@@ -4,40 +4,22 @@ import com.seriousapp.serious.app.users.User;
 import com.seriousapp.serious.app.users.UserRoles;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
-@Table(name = "admin")
+@Table(name = "admins")
+@DiscriminatorValue("ADMIN")
 public class Admin extends User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String fullName;
-    private String email;
     private String employeeId;
-    private String username;
-    private String password;
-
-    @Enumerated(EnumType.STRING)
-    private UserRoles role = UserRoles.ADMIN;
 
     public Admin() {}
 
-    public Admin(UserRoles userRoles, String username, String password) {
-        this.role = userRoles;
-        this.username = username;
-        this.password = password;
-    }
-
-    public Admin(UserRoles userRoles, String username, String password, String email) {
-        super(userRoles, username, password);
-        this.email = email;
-    }
-
-    public Admin(UserRoles userRoles, String username, String password, String email, String fullName, String employeeId) {
-        super(userRoles, username, password);
-        this.email = email;
-        this.fullName = fullName;
+    public Admin(String username, String email, String password, String employeeId) {
+        super(username, email, password);
         this.employeeId = employeeId;
     }
 }

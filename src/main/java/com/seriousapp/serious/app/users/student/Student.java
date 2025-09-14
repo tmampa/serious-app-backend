@@ -4,82 +4,47 @@ import java.util.*;
 
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.contact.Email;
-import com.seriousapp.serious.app.contact.Phone;
 
 import com.seriousapp.serious.app.users.User;
 import com.seriousapp.serious.app.users.UserRoles;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Entity
-@Table(name = "student")
+@Table(name = "students")
+@DiscriminatorValue("STUDENT")
 public class Student extends User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String fullName;
+    private String firstNames;
+    private String lastName;
     private Long studentNumber;
-    private String username;
-    private String password;
-
-    @Enumerated(EnumType.STRING)
-    private UserRoles role = UserRoles.STUDENT;
-
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Email> emails = new java.util.HashSet<>();
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<Phone> phoneNumbers = new java.util.HashSet<>();
+    private Set<Email> emails = new HashSet<>();
     private String address;
     private double outstandingFines;
-
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<BorrowingRecord> borrowedBooks = new ArrayList<>();
 
+    // Constructors, getters, setters
     public Student() {}
 
-    public Student(UserRoles userRoles, String username, String password) {
-        this.role = userRoles;
-        this.username = username;
-        this.password = password;
-    }
-
-    // Helper methods for bidirectional relationship
-    public void addChild(Email email) {
-        emails.add(email);
-        email.setStudent(this);
-    }
-
-    public void removeChild(Email email) {
-        emails.remove(email);
-        email.setStudent(null);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Student student = (Student) o;
-        return Objects.equals(id, student.id) &&
-               Objects.equals(fullName, student.fullName) &&
-               Objects.equals(studentNumber, student.studentNumber) &&
-               Objects.equals(address, student.address) &&
-               Double.compare(outstandingFines, student.outstandingFines) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, fullName, studentNumber, address, outstandingFines);
-    }
-
-    @Override
-    public String toString() {
-        return "Student{" +
-                "id=" + id +
-                ", fullName='" + fullName + '\'' +
-                ", studentNumber=" + studentNumber +
-                ", address='" + address + '\'' +
-                ", outstandingFines=" + outstandingFines +
-                '}';
+    public Student(
+            String username,
+            String email,
+            String password,
+            String firstNames,
+            String lastName,
+            String address,
+            double outstandingFines,
+            Long studentNumber
+    ) {
+        super(username, email, password);
+        this.firstNames = firstNames;
+        this.lastName = lastName;
+        this.address = address;
+        this.outstandingFines = outstandingFines;
+        this.studentNumber = studentNumber;
     }
 }
