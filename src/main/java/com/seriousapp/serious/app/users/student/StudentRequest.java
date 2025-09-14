@@ -12,7 +12,6 @@ public class StudentRequest {
     private String username;
     private String password;
     private Set<Email> emails = new java.util.HashSet<>();
-    private Set<Phone> phoneNumbers = new java.util.HashSet<>();
     private String address;
     private double outstandingFines;
 }

@@ -17,10 +17,8 @@ public class StudentResponse {
     private String fullName;
     private Long studentNumber;
     private String username;
-    private UserRoles role;
-
+    private String role;
     private Set<Email> emails;
-    private Set<Phone> phoneNumbers;
     private String address;
     private double outstandingFines;
 
