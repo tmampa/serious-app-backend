@@ -7,9 +7,7 @@ import java.util.stream.Collectors;
 
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.borrowing.BorrowingRecordService;
-import com.seriousapp.serious.app.contact.Email;
-import com.seriousapp.serious.app.contact.EmailRequest;
-import com.seriousapp.serious.app.contact.EmailService;
+import com.seriousapp.serious.app.parent.ParentService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,7 +41,7 @@ public class StudentService {
     private String computerVisionEndpoint;
     @Value("${computer.vision.key}")
     private String computerVisionKey;
-    private final EmailService emailService;
+    private final ParentService parentService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final BlobServiceClient blobServiceClient;
 
@@ -51,14 +49,14 @@ public class StudentService {
             StudentRepository studentRepository,
             BookService bookService,
             BorrowingRecordService borrowingRecordService,
-            EmailService emailService,
+            ParentService parentService,
             BCryptPasswordEncoder bCryptPasswordEncoder,
             BlobServiceClient blobServiceClient
     ) {
         this.studentRepository = studentRepository;
         this.bookService = bookService;
         this.borrowingRecordService = borrowingRecordService;
-        this.emailService = emailService;
+        this.parentService = parentService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.blobServiceClient = blobServiceClient;
     }

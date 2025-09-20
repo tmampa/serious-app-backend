@@ -73,7 +73,7 @@
         </dependency>
             <dependency>
                 <groupId>com.azure</groupId>
-                <artifactId>azure-communication-email</artifactId>
+                <artifactId>azure-communication-parent</artifactId>
             </dependency>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security -->
         <dependency>

@@ -13,7 +13,7 @@ For further reference, please consider the following sections:
 * [Create an OCI image](https://docs.spring.io/spring-boot/3.4.9/maven-plugin/build-image.html)
 * [Spring Web](https://docs.spring.io/spring-boot/3.4.9/reference/web/servlet.html)
 * [Spring Data JPA](https://docs.spring.io/spring-boot/3.4.9/reference/data/sql.html#data.sql.jpa-and-spring-data)
-* [Java Mail Sender](https://docs.spring.io/spring-boot/3.4.9/reference/io/email.html)
+* [Java Mail Sender](https://docs.spring.io/spring-boot/3.4.9/reference/io/parent.html)
 
 ### Guides
 The following guides illustrate how to use some features concretely:

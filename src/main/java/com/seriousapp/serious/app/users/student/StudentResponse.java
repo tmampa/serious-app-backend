@@ -1,7 +1,7 @@
 package com.seriousapp.serious.app.users.student;
 
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
-import com.seriousapp.serious.app.contact.Email;
+import com.seriousapp.serious.app.parent.Parent;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class StudentResponse {
     private Long studentNumber;
     private String username;
     private String role;
-    private Set<Email> emails;
+    private Set<Parent> parents;
     private String address;
     private double outstandingFines;
 

@@ -1,4 +1,4 @@
-package com.seriousapp.serious.app.contact;
+package com.seriousapp.serious.app.parent;
 
 import com.seriousapp.serious.app.users.student.Student;
 import jakarta.persistence.*;
@@ -8,8 +8,8 @@ import java.util.Objects;
 
 @Data
 @Entity
-@Table(name = "email")
-public class Email {
+@Table(name = "parents")
+public class Parent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,27 +23,24 @@ public class Email {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Email email1 = (Email) o;
-        return Objects.equals(id, email1.id) &&
-               Objects.equals(email, email1.email) &&
-               Objects.equals(name, email1.name) &&
-               Objects.equals(relationship, email1.relationship);
+        Parent parent = (Parent) o;
+        return Objects.equals(id, parent.id) && Objects.equals(email, parent.email) && Objects.equals(name, parent.name) && Objects.equals(relationship, parent.relationship) && Objects.equals(student, parent.student);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, name, relationship);
+        return Objects.hash(id, email, name, relationship, student);
     }
 
     @Override
     public String toString() {
-        return "Email{" +
+        return "Parent{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", relationship='" + relationship + '\'' +
+                ", student=" + student +
                 '}';
     }
 }

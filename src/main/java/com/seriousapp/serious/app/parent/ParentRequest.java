@@ -1,9 +1,9 @@
-package com.seriousapp.serious.app.contact;
+package com.seriousapp.serious.app.parent;
 
 import lombok.Data;
 
 @Data
-public class EmailRequest {
+public class ParentRequest {
     private String email;
     private String name;
     private String relationship;

@@ -3,10 +3,9 @@ package com.seriousapp.serious.app.users.student;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
-import com.seriousapp.serious.app.contact.Email;
+import com.seriousapp.serious.app.parent.Parent;
 
 import com.seriousapp.serious.app.users.User;
 import jakarta.persistence.*;
@@ -28,7 +27,7 @@ public class Student extends User {
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference("student-email")
-    private Set<Email> emails = new HashSet<>();
+    private Set<Parent> parents = new HashSet<>();
 
     private String address;
     private double outstandingFines;

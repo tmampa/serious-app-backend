@@ -5,7 +5,7 @@ import com.seriousapp.serious.app.book.BookResponse;
 import com.seriousapp.serious.app.book.BookService;
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.borrowing.BorrowingRecordService;
-import com.seriousapp.serious.app.contact.Email;
+import com.seriousapp.serious.app.parent.Parent;
 import com.seriousapp.serious.app.dto.BookRequest;
 import com.seriousapp.serious.app.dto.BorrowRecordResponse;
 import com.seriousapp.serious.app.dto.UserRequest;
@@ -16,10 +16,7 @@ import com.seriousapp.serious.app.users.student.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -116,7 +113,7 @@ public class AdminController {
     @PostMapping("/create-student")
     public ResponseEntity<?> registerNewStudent(@RequestBody StudentRequest studentRequest){
         Student student = new Student();
-        Set<Email> emailSet = new java.util.HashSet<>();
+        Set<Parent> parentSet = new java.util.HashSet<>();
 
         student.setFirstNames(studentRequest.getFirstNames());
         student.setLastName(studentRequest.getLastName());
@@ -127,14 +124,14 @@ public class AdminController {
         student.setAddress(studentRequest.getAddress());
         student.setOutstandingFines(studentRequest.getOutstandingFines());
         studentRequest.getEmails().forEach(email -> {
-            Email newEmail = new Email();
-            newEmail.setEmail(email.getEmail());
-            newEmail.setStudent(student);
-            newEmail.setRelationship(email.getRelationship());
-            newEmail.setName(email.getName());
-            emailSet.add(newEmail);
+            Parent newParent = new Parent();
+            newParent.setEmail(email.getEmail());
+            newParent.setStudent(student);
+            newParent.setRelationship(email.getRelationship());
+            newParent.setName(email.getName());
+            parentSet.add(newParent);
         });
-        student.setEmails(emailSet);
+        student.setParents(parentSet);
         var savedStudent = studentService.createStudent(student);
         return ResponseEntity.ok(savedStudent);
     }
@@ -203,7 +200,7 @@ public class AdminController {
                     .studentNumber(student.getStudentNumber())
                     .username(student.getUsername())
                     .role("STUDENT")
-                    .emails(student.getEmails())
+                    .parents(student.getParents())
                     .address(student.getAddress())
                     .outstandingFines(student.getOutstandingFines())
                     .borrowedBooks(student.getBorrowedBooks())

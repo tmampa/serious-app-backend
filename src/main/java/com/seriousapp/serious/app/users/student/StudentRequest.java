@@ -1,7 +1,6 @@
 package com.seriousapp.serious.app.users.student;
 
-import com.seriousapp.serious.app.contact.Email;
-import com.seriousapp.serious.app.contact.EmailRequest;
+import com.seriousapp.serious.app.parent.ParentRequest;
 import lombok.Data;
 
 import java.util.Set;
@@ -14,7 +13,7 @@ public class StudentRequest {
     private Long studentNumber;
     private String username;
     private String password;
-    private Set<EmailRequest> emails = new java.util.HashSet<>();
+    private Set<ParentRequest> emails = new java.util.HashSet<>();
     private String address;
     private double outstandingFines;
 }

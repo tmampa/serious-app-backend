@@ -16,7 +16,7 @@ import com.seriousapp.serious.app.book.BookService;
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.borrowing.BorrowingRecordService;
 import com.seriousapp.serious.app.configurations.EmailConfiguration;
-import com.seriousapp.serious.app.contact.Email;
+import com.seriousapp.serious.app.parent.Parent;
 import com.seriousapp.serious.app.dto.BorrowRecordResponse;
 import com.seriousapp.serious.app.dto.UserRequest;
 import com.seriousapp.serious.app.users.student.Student;
@@ -252,8 +252,8 @@ public class AdminService {
     private void sendBorrowEmail(BorrowingRecord record, Set<String> imagesURLS) {
         Student student = record.getStudent();
         Book book = record.getBook();
-        List<String> parentEmails = new ArrayList<>(student.getEmails().stream()
-                .map(Email::getEmail)
+        List<String> parentEmails = new ArrayList<>(student.getParents().stream()
+                .map(Parent::getEmail)
                 .toList());
 
         if (parentEmails.isEmpty()) {
@@ -271,8 +271,8 @@ public class AdminService {
     private void sendReturnEmail(BorrowingRecord record, Set<String> imagesURLS, double amountOwed, Set<String> damages) {
         Student student = record.getStudent();
         Book book = record.getBook();
-        List<String> parentEmails = student.getEmails().stream()
-                .map(Email::getEmail)
+        List<String> parentEmails = student.getParents().stream()
+                .map(Parent::getEmail)
                 .toList();
 
         if (parentEmails.isEmpty()) {
