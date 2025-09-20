@@ -36,4 +36,8 @@ public class BorrowingRecordService {
             throw new RuntimeException("Error finding borrowing record by ID", e);
         }
     }
+
+    public List<BorrowingRecord> getAllBorrowRecords() {
+        return this.borrowingRecordRepository.findAll();
+    }
 }

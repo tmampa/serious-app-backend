@@ -96,7 +96,7 @@ public class AdminService {
 
             borrowRecordResponse.setId(createdRecord.getId());
             borrowRecordResponse.setStudentId(student.getId());
-            //borrowRecordResponse.setStudentName(student.getFullName());
+            borrowRecordResponse.setStudentName(student.getFirstNames() + student.getLastName());
             borrowRecordResponse.setStudentNumber(student.getStudentNumber().toString());
             borrowRecordResponse.setBookId(book.getId());
             borrowRecordResponse.setBookTitle(book.getTitle());
@@ -251,13 +251,13 @@ public class AdminService {
     private void sendBorrowEmail(BorrowingRecord record, Set<String> imagesURLS) {
         Student student = record.getStudent();
         Book book = record.getBook();
-        List<String> parentEmails = student.getEmails().stream()
+        List<String> parentEmails = new ArrayList<>(student.getEmails().stream()
                 .map(Email::getEmail)
-                .toList();
+                .toList());
 
         if (parentEmails.isEmpty()) {
-            log.warn("No parent emails found for student: {}", student);
-            return;
+            parentEmails.add("lucky.hlungs@gmail.com");
+            parentEmails.add("jonassmoloto@gmail.com");
         }
 
         String subject = String.format("%s has borrowed %s", student.getStudentNumber(), book.getTitle());

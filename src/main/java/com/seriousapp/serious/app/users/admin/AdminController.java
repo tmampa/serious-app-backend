@@ -146,4 +146,19 @@ public class AdminController {
         var savedAdmin = adminService.createAdmin(admin);
         return ResponseEntity.ok(savedAdmin);
     }
+
+    @GetMapping("/books")
+    public ResponseEntity<List<Book>> getAllBooks() {
+        return ResponseEntity.ok(this.bookService.getAllBooks());
+    }
+
+    @GetMapping("/borrow-records")
+    public ResponseEntity<List<BorrowingRecord>> getAllBorrowRecords() {
+        return ResponseEntity.ok(this.borrowingRecordService.getAllBorrowRecords());
+    }
+
+    @GetMapping("/students")
+    public ResponseEntity<List<Student>> getAllStudents() {
+        return ResponseEntity.ok(this.studentService.getAllStudents());
+    }
 }
