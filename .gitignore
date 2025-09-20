@@ -1,3 +1,48 @@
-
+HELP.md
 /target/
 /.idea/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Logs ###
+*.log
+logs/
+
+### Application Properties ###
+application-*.properties
+!application.properties
+!application.properties.template
+
+### Maven ###
+.mvn/*
+!.mvn/wrapper/
+
+### OS specific ###
+.DS_Store
+Thumbs.db
