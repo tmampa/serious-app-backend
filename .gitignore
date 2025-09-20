@@ -46,3 +46,7 @@ application-*.properties
 ### OS specific ###
 .DS_Store
 Thumbs.db
+/target/
+target/
+/target
+target

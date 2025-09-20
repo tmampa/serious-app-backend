@@ -9,6 +9,7 @@ import com.seriousapp.serious.app.parent.Parent;
 import com.seriousapp.serious.app.dto.BookRequest;
 import com.seriousapp.serious.app.dto.BorrowRecordResponse;
 import com.seriousapp.serious.app.dto.UserRequest;
+import com.seriousapp.serious.app.parent.ParentResponse;
 import com.seriousapp.serious.app.users.student.Student;
 import com.seriousapp.serious.app.users.student.StudentRequest;
 import com.seriousapp.serious.app.users.student.StudentResponse;
@@ -139,7 +140,30 @@ public class AdminController {
         student.setParents(parentSet);
 
         var savedStudent = studentService.saveStudent(student);
-        return ResponseEntity.ok(savedStudent);
+
+        // Convert to StudentResponse
+        Set<ParentResponse> parentResponses = savedStudent.getParents().stream()
+            .map(parent -> ParentResponse.builder()
+                .id(parent.getId())
+                .name(parent.getName())
+                .email(parent.getEmail())
+                .relationship(parent.getRelationship())
+                .build())
+            .collect(java.util.stream.Collectors.toSet());
+
+        StudentResponse response = StudentResponse.builder()
+            .id(savedStudent.getId())
+            .fullName(savedStudent.getFirstNames() + " " + savedStudent.getLastName())
+            .studentNumber(savedStudent.getStudentNumber())
+            .username(savedStudent.getUsername())
+            .role("STUDENT")
+            .parents(parentResponses)
+            .address(savedStudent.getAddress())
+            .outstandingFines(savedStudent.getOutstandingFines())
+            .borrowedBooks(savedStudent.getBorrowedBooks())
+            .build();
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/create-admin")
@@ -196,22 +220,30 @@ public class AdminController {
     @GetMapping("/students")
     public ResponseEntity<?> getAllStudents() {
         var students = this.studentService.getAllStudents();
-
         List<StudentResponse> studentResponses = new ArrayList<>();
 
         for (Student student: students) {
+            // Convert Parent entities to ParentResponse DTOs
+            Set<ParentResponse> parentResponses = student.getParents().stream()
+                .map(parent -> ParentResponse.builder()
+                    .id(parent.getId())
+                    .name(parent.getName())
+                    .email(parent.getEmail())
+                    .relationship(parent.getRelationship())
+                    .build())
+                .collect(java.util.stream.Collectors.toSet());
+
             studentResponses.add(StudentResponse.builder()
                     .id(student.getId())
                     .fullName(student.getFirstNames() + " " + student.getLastName())
                     .studentNumber(student.getStudentNumber())
                     .username(student.getUsername())
                     .role("STUDENT")
-                    .parents(student.getParents())
+                    .parents(parentResponses)
                     .address(student.getAddress())
                     .outstandingFines(student.getOutstandingFines())
                     .borrowedBooks(student.getBorrowedBooks())
                     .build());
-
         }
         return ResponseEntity.ok(studentResponses);
     }
