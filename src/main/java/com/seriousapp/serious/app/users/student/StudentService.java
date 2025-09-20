@@ -188,6 +188,7 @@ public class StudentService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public Student saveStudent(Student student) {
         return this.studentRepository.save(student);
     }
@@ -208,21 +209,28 @@ public class StudentService {
         this.studentRepository.save(student);
     }
 
+    @Transactional
     public Student createStudent(Student student) {
-        String encodedPassword = bCryptPasswordEncoder.encode(student.getPassword());
-        student.setPassword(encodedPassword);
-        return studentRepository.save(
-                new Student(
-                        student.getUsername(),
-                        student.getEmail(),
-                        student.getPassword(),
-                        student.getFirstNames(),
-                        student.getLastName(),
-                        student.getAddress(),
-                        student.getOutstandingFines(),
-                        student.getStudentNumber()
-                )
-        );
+        // Encrypt the password
+        student.setPassword(bCryptPasswordEncoder.encode(student.getPassword()));
+
+        // Set email field to match username (which is email)
+        student.setEmail(student.getUsername());
+
+        // Save the student first to get the ID
+        Student savedStudent = studentRepository.save(student);
+
+        // Now handle the parents
+        if (student.getParents() != null && !student.getParents().isEmpty()) {
+            student.getParents().forEach(parent -> {
+                parent.setStudent(savedStudent);
+                parentService.save(parent);
+            });
+        }
+
+        // Refresh the student to get the updated parents list
+        return studentRepository.findById(savedStudent.getId())
+                .orElseThrow(() -> new RuntimeException("Failed to create student"));
     }
 
     public Student getStudentById(Long id) {

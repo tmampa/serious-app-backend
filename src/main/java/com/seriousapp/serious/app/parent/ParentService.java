@@ -12,7 +12,7 @@ public class ParentService {
         this.parentRepository = parentRepository;
     }
 
-    public Parent saveEmail(Parent parent) {
+    public Parent save(Parent parent) {
         return parentRepository.save(parent);
     }
 

@@ -13,7 +13,7 @@ public class StudentRequest {
     private Long studentNumber;
     private String username;
     private String password;
-    private Set<ParentRequest> emails = new java.util.HashSet<>();
+    private Set<ParentRequest> parents = new java.util.HashSet<>();
     private String address;
     private double outstandingFines;
 }

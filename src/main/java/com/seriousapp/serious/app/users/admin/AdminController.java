@@ -113,26 +113,32 @@ public class AdminController {
     @PostMapping("/create-student")
     public ResponseEntity<?> registerNewStudent(@RequestBody StudentRequest studentRequest){
         Student student = new Student();
-        Set<Parent> parentSet = new java.util.HashSet<>();
 
-        student.setFirstNames(studentRequest.getFirstNames());
-        student.setLastName(studentRequest.getLastName());
-        student.setEmail(studentRequest.getEmail());
-        student.setStudentNumber(studentRequest.getStudentNumber());
+        // Set User properties first
         student.setUsername(studentRequest.getUsername());
         student.setPassword(studentRequest.getPassword());
+        student.setEmail(studentRequest.getEmail());
+
+        // Set Student-specific properties
+        student.setFirstNames(studentRequest.getFirstNames());
+        student.setLastName(studentRequest.getLastName());
+        student.setStudentNumber(studentRequest.getStudentNumber());
         student.setAddress(studentRequest.getAddress());
         student.setOutstandingFines(studentRequest.getOutstandingFines());
-        studentRequest.getEmails().forEach(email -> {
+
+        // Handle parents
+        Set<Parent> parentSet = new java.util.HashSet<>();
+        studentRequest.getParents().forEach(parent -> {
             Parent newParent = new Parent();
-            newParent.setEmail(email.getEmail());
+            newParent.setEmail(parent.getEmail());
             newParent.setStudent(student);
-            newParent.setRelationship(email.getRelationship());
-            newParent.setName(email.getName());
+            newParent.setRelationship(parent.getRelationship());
+            newParent.setName(parent.getName());
             parentSet.add(newParent);
         });
         student.setParents(parentSet);
-        var savedStudent = studentService.createStudent(student);
+
+        var savedStudent = studentService.saveStudent(student);
         return ResponseEntity.ok(savedStudent);
     }
 
