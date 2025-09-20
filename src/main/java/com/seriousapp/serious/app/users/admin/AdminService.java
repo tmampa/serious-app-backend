@@ -78,34 +78,35 @@ public class AdminService {
             throw new RuntimeException("Book not found");
         }
 
-        Student student = studentService.getStudent(userRequest);
+        Optional<Student> student = studentService.getStudentByStudentNumber(userRequest.getStudentNumber());
+
+        if (student.isEmpty()) {
+            throw new RuntimeException("Student not found");
+        }
+
         LocalDate borrowDate = LocalDate.now();
 
         BorrowingRecord record = new BorrowingRecord();
-        record.setStudent(student);
+        record.setStudent(student.get());
         record.setBook(book);
         record.setBorrowDate(borrowDate);
 
         BorrowRecordResponse borrowRecordResponse = new BorrowRecordResponse();
 
-        if (book.getStockQuantity() > 0) {
-            book.setStockQuantity(book.getStockQuantity() - 1);
-            studentService.saveStudent(student);
-            bookService.saveBook(book);
-            BorrowingRecord createdRecord = borrowingRecordService.save(record);
+        studentService.saveStudent(student.get());
+        bookService.saveBook(book);
+        BorrowingRecord createdRecord = borrowingRecordService.save(record);
 
-            borrowRecordResponse.setId(createdRecord.getId());
-            borrowRecordResponse.setStudentId(student.getId());
-            borrowRecordResponse.setStudentName(student.getFirstNames() + student.getLastName());
-            borrowRecordResponse.setStudentNumber(student.getStudentNumber().toString());
-            borrowRecordResponse.setBookId(book.getId());
-            borrowRecordResponse.setBookTitle(book.getTitle());
-            borrowRecordResponse.setAuthor(book.getAuthor());
-            borrowRecordResponse.setBorrowDate(createdRecord.getBorrowDate());
+        borrowRecordResponse.setId(createdRecord.getId());
+        borrowRecordResponse.setStudentId(student.get().getId());
+        borrowRecordResponse.setStudentName(student.get().getFirstNames() + student.get().getLastName());
+        borrowRecordResponse.setStudentNumber(student.get().getStudentNumber().toString());
+        borrowRecordResponse.setBookId(book.getId());
+        borrowRecordResponse.setBookTitle(book.getTitle());
+        borrowRecordResponse.setAuthor(book.getAuthor());
+        borrowRecordResponse.setBorrowDate(createdRecord.getBorrowDate());
 
-            return borrowRecordResponse;
-        }
-        throw new RuntimeException("Book is not available");
+        return borrowRecordResponse;
     }
 
     private String sanitizeContainerName(String name) {

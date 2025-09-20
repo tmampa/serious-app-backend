@@ -1,7 +1,9 @@
 package com.seriousapp.serious.app.users.student;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.contact.Email;
 
@@ -9,6 +11,8 @@ import com.seriousapp.serious.app.users.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Getter
 @Setter
@@ -26,6 +30,13 @@ public class Student extends User {
     private double outstandingFines;
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<BorrowingRecord> borrowedBooks = new ArrayList<>();
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     // Constructors, getters, setters
     public Student() {}

@@ -1,6 +1,7 @@
 package com.seriousapp.serious.app.users.admin;
 
 import com.seriousapp.serious.app.book.Book;
+import com.seriousapp.serious.app.book.BookResponse;
 import com.seriousapp.serious.app.book.BookService;
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.borrowing.BorrowingRecordService;
@@ -10,6 +11,7 @@ import com.seriousapp.serious.app.dto.BorrowRecordResponse;
 import com.seriousapp.serious.app.dto.UserRequest;
 import com.seriousapp.serious.app.users.student.Student;
 import com.seriousapp.serious.app.users.student.StudentRequest;
+import com.seriousapp.serious.app.users.student.StudentResponse;
 import com.seriousapp.serious.app.users.student.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -148,17 +151,65 @@ public class AdminController {
     }
 
     @GetMapping("/books")
-    public ResponseEntity<List<Book>> getAllBooks() {
-        return ResponseEntity.ok(this.bookService.getAllBooks());
+    public ResponseEntity<?> getAllBooks() {
+
+        var books = this.bookService.getAllBooks();
+        List<BookResponse> bookResponses = new ArrayList<>();
+
+        for (Book book: books) {
+            bookResponses.add(BookResponse.builder()
+                    .id(book.getId())
+                    .title(book.getTitle())
+                    .author(book.getAuthor())
+                    .isbn(book.getIsbn())
+                    .build());
+        }
+
+        return ResponseEntity.ok(bookResponses);
     }
 
     @GetMapping("/borrow-records")
     public ResponseEntity<List<BorrowingRecord>> getAllBorrowRecords() {
-        return ResponseEntity.ok(this.borrowingRecordService.getAllBorrowRecords());
+        var records = this.borrowingRecordService.getAllBorrowRecords();
+        List<BorrowingRecord> borrowingRecords = new ArrayList<>();
+
+        for (BorrowingRecord record: records) {
+            BorrowRecordResponse borrowRecordResponse = new BorrowRecordResponse();
+            borrowRecordResponse.setId(record.getId());
+            borrowRecordResponse.setStudentId(record.getStudent().getId());
+            borrowRecordResponse.setStudentName(record.getStudent().getFirstNames() + " " + record.getStudent().getLastName());
+            borrowRecordResponse.setStudentNumber(String.valueOf(record.getStudent().getStudentNumber()));
+            borrowRecordResponse.setBookTitle(record.getBook().getTitle());
+            borrowRecordResponse.setBorrowDate(record.getBorrowDate());
+            borrowRecordResponse.setDueDate(record.getDueDate());
+            borrowRecordResponse.setReturnDate(record.getReturnDate());
+            borrowRecordResponse.setFineAmount(record.getFineAmount());
+            borrowingRecords.add(record);
+        }
+
+        return ResponseEntity.ok(borrowingRecords);
     }
 
     @GetMapping("/students")
-    public ResponseEntity<List<Student>> getAllStudents() {
-        return ResponseEntity.ok(this.studentService.getAllStudents());
+    public ResponseEntity<?> getAllStudents() {
+        var students = this.studentService.getAllStudents();
+
+        List<StudentResponse> studentResponses = new ArrayList<>();
+
+        for (Student student: students) {
+            studentResponses.add(StudentResponse.builder()
+                    .id(student.getId())
+                    .fullName(student.getFirstNames() + " " + student.getLastName())
+                    .studentNumber(student.getStudentNumber())
+                    .username(student.getUsername())
+                    .role("STUDENT")
+                    .emails(student.getEmails())
+                    .address(student.getAddress())
+                    .outstandingFines(student.getOutstandingFines())
+                    .borrowedBooks(student.getBorrowedBooks())
+                    .build());
+
+        }
+        return ResponseEntity.ok(studentResponses);
     }
 }

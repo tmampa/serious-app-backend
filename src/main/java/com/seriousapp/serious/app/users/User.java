@@ -32,9 +32,11 @@ public class User {
     private boolean enabled = true;
 
     @CreationTimestamp
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     // Constructors, getters, setters

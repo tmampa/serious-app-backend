@@ -284,4 +284,8 @@ public class StudentService {
     public List<Student> getAllStudents() {
         return this.studentRepository.findAll();
     }
+
+    public Optional<Student> getStudentByStudentNumber(Long studentNumber) {
+        return studentRepository.findByStudentNumber(studentNumber);
+    }
 }
