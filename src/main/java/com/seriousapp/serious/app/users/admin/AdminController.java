@@ -70,7 +70,16 @@ public class AdminController {
         book.setTitle(bookRequest.getTitle());
         book.setAuthor(bookRequest.getAuthor());
         book.setIsbn(bookRequest.getIsbn());
-        book.setAvailable(true);
+        book.setGrade(bookRequest.getGrade());
+        book.setBarcode(bookRequest.getBarcode());
+        book.setPublishedYear(bookRequest.getPublishedYear());
+        book.setPublisher(bookRequest.getPublisher());
+        book.setPages(bookRequest.getPages());
+        book.setLanguage(bookRequest.getLanguage());
+        book.setGenre(bookRequest.getGenre());
+        book.setDescription(bookRequest.getDescription());
+        book.setPrice(bookRequest.getPrice());
+        book.setCoverImageUrl(bookRequest.getCoverImageUrl());
         return ResponseEntity.ok(bookService.saveBook(book));
     }
 

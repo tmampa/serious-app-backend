@@ -125,9 +125,9 @@ public class StudentService {
             }
         }
 
-        book.setImagesURL(blobContainerClient.getBlobContainerUrl());
-        book.setImages(images.stream().map(MultipartFile::getOriginalFilename).toList());
-        book.setTags(computerVisionTags);
+//        book.setImagesURL(blobContainerClient.getBlobContainerUrl());
+//        book.setImages(images.stream().map(MultipartFile::getOriginalFilename).toList());
+//        book.setTags(computerVisionTags);
 
         // Create borrowing record
         LocalDate borrowDate = LocalDate.now();
@@ -137,12 +137,11 @@ public class StudentService {
         record.setBook(book);
         record.setBorrowDate(borrowDate);
 
-        if (book.getStockQuantity() > 0) {
-            book.setStockQuantity(book.getStockQuantity() - 1);
-            this.studentRepository.save(student);
-            this.bookService.saveBook(book);
-            this.borrowingRecordService.save(record);
-        }
+
+        this.studentRepository.save(student);
+        this.bookService.saveBook(book);
+        this.borrowingRecordService.save(record);
+
     }
 
     public BorrowingRecord returnBook(Long studentNumber, String bookName) {
@@ -165,7 +164,6 @@ public class StudentService {
         record.setReturnDate(LocalDate.now());
 
         // Update book quantity
-        book.setStockQuantity(book.getStockQuantity() + 1);
         this.bookService.saveBook(book);
 
         // Save updated record
