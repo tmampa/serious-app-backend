@@ -5,6 +5,7 @@ import com.seriousapp.serious.app.book.BookResponse;
 import com.seriousapp.serious.app.book.BookService;
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.borrowing.BorrowingRecordService;
+import com.seriousapp.serious.app.configurations.EmailConfiguration;
 import com.seriousapp.serious.app.parent.Parent;
 import com.seriousapp.serious.app.dto.BookRequest;
 import com.seriousapp.serious.app.dto.BorrowRecordResponse;
@@ -14,6 +15,7 @@ import com.seriousapp.serious.app.users.student.Student;
 import com.seriousapp.serious.app.users.student.StudentRequest;
 import com.seriousapp.serious.app.users.student.StudentResponse;
 import com.seriousapp.serious.app.users.student.StudentService;
+import com.seriousapp.serious.app.utils.PasswordGenerator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,15 +37,21 @@ public class AdminController {
     private final BookService bookService;
     private final BorrowingRecordService borrowingRecordService;
     private final StudentService studentService;
+    private final EmailConfiguration emailConfiguration;
+    private final PasswordGenerator passwordGenerator;
 
     public AdminController(AdminService adminService,
                          BookService bookService,
                          BorrowingRecordService borrowingRecordService,
-                         StudentService studentService) {
+                         StudentService studentService,
+                         EmailConfiguration emailConfiguration,
+                         PasswordGenerator passwordGenerator) {
         this.adminService = adminService;
         this.bookService = bookService;
         this.borrowingRecordService = borrowingRecordService;
         this.studentService = studentService;
+        this.emailConfiguration = emailConfiguration;
+        this.passwordGenerator = passwordGenerator;
     }
 
     @Operation(
@@ -112,12 +120,13 @@ public class AdminController {
     }
 
     @PostMapping("/create-student")
-    public ResponseEntity<?> registerNewStudent(@RequestBody StudentRequest studentRequest){
+    public ResponseEntity<?> registerNewStudent(@RequestBody StudentRequest studentRequest) {
         Student student = new Student();
+        String generatedPassword = passwordGenerator.generateSecurePassword();
 
         // Set User properties first
         student.setUsername(studentRequest.getUsername());
-        student.setPassword(studentRequest.getPassword());
+        student.setPassword(generatedPassword); // Use generated password instead
         student.setEmail(studentRequest.getEmail());
 
         // Set Student-specific properties
@@ -140,6 +149,27 @@ public class AdminController {
         student.setParents(parentSet);
 
         var savedStudent = studentService.saveStudent(student);
+
+        // Send email to student
+        sendLoginCredentialsEmail(
+            List.of(student.getEmail()),
+            student.getUsername(),
+            generatedPassword,
+            "Student"
+        );
+
+        // Send email to parents
+        List<String> parentEmails = savedStudent.getParents().stream()
+            .map(Parent::getEmail)
+            .toList();
+        if (!parentEmails.isEmpty()) {
+            sendLoginCredentialsEmail(
+                parentEmails,
+                student.getUsername(),
+                generatedPassword,
+                "Parent"
+            );
+        }
 
         // Convert to StudentResponse
         Set<ParentResponse> parentResponses = savedStudent.getParents().stream()
@@ -246,5 +276,37 @@ public class AdminController {
                     .build());
         }
         return ResponseEntity.ok(studentResponses);
+    }
+
+    private void sendLoginCredentialsEmail(List<String> emails, String username, String password, String recipientType) {
+        String subject = "Library System - Login Credentials";
+        String plainText = String.format("""
+            Welcome to the Library System!
+            
+            Here are the login credentials for %s:
+            Username: %s
+            Password: %s
+            
+            Please change your password upon first login.
+            
+            Best regards,
+            Library System Team
+            """, recipientType, username, password);
+
+        String htmlBody = String.format("""
+            <html>
+            <body>
+                <h2>Welcome to the Library System!</h2>
+                <p>Here are the login credentials for %s:</p>
+                <p><strong>Username:</strong> %s</p>
+                <p><strong>Password:</strong> %s</p>
+                <p>Please change your password upon first login.</p>
+                <br>
+                <p>Best regards,<br>Library System Team</p>
+            </body>
+            </html>
+            """, recipientType, username, password);
+
+        emailConfiguration.sendEmail(emails, subject, plainText, htmlBody);
     }
 }
