@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -34,5 +35,6 @@ public class Book {
     private double stockQuantity;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    @JsonManagedReference("book-borrowing")
     private List<BorrowingRecord> borrowingRecords = new ArrayList<>();
 }

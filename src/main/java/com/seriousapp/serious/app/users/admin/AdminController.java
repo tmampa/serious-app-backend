@@ -169,9 +169,9 @@ public class AdminController {
     }
 
     @GetMapping("/borrow-records")
-    public ResponseEntity<List<BorrowingRecord>> getAllBorrowRecords() {
+    public ResponseEntity<?> getAllBorrowRecords() {
         var records = this.borrowingRecordService.getAllBorrowRecords();
-        List<BorrowingRecord> borrowingRecords = new ArrayList<>();
+        List<BorrowRecordResponse> borrowingRecords = new ArrayList<>();
 
         for (BorrowingRecord record: records) {
             BorrowRecordResponse borrowRecordResponse = new BorrowRecordResponse();
@@ -181,10 +181,10 @@ public class AdminController {
             borrowRecordResponse.setStudentNumber(String.valueOf(record.getStudent().getStudentNumber()));
             borrowRecordResponse.setBookTitle(record.getBook().getTitle());
             borrowRecordResponse.setBorrowDate(record.getBorrowDate());
-            borrowRecordResponse.setDueDate(record.getDueDate());
+           // borrowRecordResponse.setDueDate(record.getDueDate());
             borrowRecordResponse.setReturnDate(record.getReturnDate());
-            borrowRecordResponse.setFineAmount(record.getFineAmount());
-            borrowingRecords.add(record);
+            //borrowRecordResponse.setFineAmount(record.getFineAmount());
+            borrowingRecords.add(borrowRecordResponse);
         }
 
         return ResponseEntity.ok(borrowingRecords);

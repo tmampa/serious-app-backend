@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.contact.Email;
 
@@ -24,11 +25,16 @@ public class Student extends User {
     private String lastName;
     private String email;
     private Long studentNumber;
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference("student-email")
     private Set<Email> emails = new HashSet<>();
+
     private String address;
     private double outstandingFines;
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @JsonManagedReference("student-borrowing")
     private List<BorrowingRecord> borrowedBooks = new ArrayList<>();
     @CreationTimestamp
     @Column(name = "created_at")
