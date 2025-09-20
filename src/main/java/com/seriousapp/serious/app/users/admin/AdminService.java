@@ -160,7 +160,7 @@ public class AdminService {
 
         String containerNameBase = String.format("%s-%s-%d-%s-%s",
             bookBeingReturned.getBook().getTitle(),
-            //bookBeingReturned.getStudent().getFullName(),
+            bookBeingReturned.getStudent().getFirstNames() + bookBeingReturned.getStudent().getLastName(),
             bookBeingReturned.getStudent().getStudentNumber(),
             LocalDate.now(),
             System.currentTimeMillis()
@@ -290,28 +290,171 @@ public class AdminService {
     private String createBorrowEmailPlainText(Student student, Book book, BorrowingRecord record, Set<String> imagesURLS) {
         StringBuilder body = new StringBuilder();
         body.append("Dear Parent/Guardian,\n\n");
-        // ...rest of the plain text email content...
+        body.append("We are pleased to inform you that your child has borrowed a book from the school library.\n\n");
+        body.append("Student Details:\n");
+        body.append("  Name: ").append(student.getFirstNames()).append(" ").append(student.getLastName()).append("\n");
+        body.append("  Student Number: ").append(student.getStudentNumber()).append("\n\n");
+        body.append("Book Details:\n");
+        body.append("  Title: ").append(book.getTitle()).append("\n");
+        body.append("  Author: ").append(book.getAuthor()).append("\n");
+        body.append("  Borrow Date: ").append(record.getBorrowDate()).append("\n\n");
+        body.append("Please ensure the book is returned by the due date in good condition to avoid any fines.\n");
+        body.append("If you would like to see the condition of the book at the time of borrowing, you can view the following images:\n");
+        for (String url : imagesURLS) {
+            body.append("  ").append(url).append("\n");
+        }
+        body.append("\nIf you have any questions, please contact the school library.\n\n");
+        body.append("Best regards,\n");
+        body.append("School Library Team");
         return body.toString();
     }
 
     private String createBorrowEmailHtml(Student student, Book book, BorrowingRecord record, Set<String> imagesURLS) {
         StringBuilder html = new StringBuilder();
+        html.append("<html><body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">");
+
         html.append("<p>Dear Parent/Guardian,</p>");
-        // ...rest of the HTML email content...
+        html.append("<p>We are pleased to inform you that your child has borrowed a book from the school library.</p>");
+
+        html.append("<div style=\"margin: 20px 0;\">");
+        html.append("<h3 style=\"color: #2c5282;\">Student Details:</h3>");
+        html.append("<ul style=\"list-style-type: none; padding-left: 20px;\">");
+        html.append("<li><strong>Name:</strong> ").append(student.getFirstNames()).append(" ").append(student.getLastName()).append("</li>");
+        html.append("<li><strong>Student Number:</strong> ").append(student.getStudentNumber()).append("</li>");
+        html.append("</ul>");
+        html.append("</div>");
+
+        html.append("<div style=\"margin: 20px 0;\">");
+        html.append("<h3 style=\"color: #2c5282;\">Book Details:</h3>");
+        html.append("<ul style=\"list-style-type: none; padding-left: 20px;\">");
+        html.append("<li><strong>Title:</strong> ").append(book.getTitle()).append("</li>");
+        html.append("<li><strong>Author:</strong> ").append(book.getAuthor()).append("</li>");
+        html.append("<li><strong>Borrow Date:</strong> ").append(record.getBorrowDate()).append("</li>");
+        html.append("</ul>");
+        html.append("</div>");
+
+        html.append("<p style=\"color: #744210; background-color: #fefcbf; padding: 15px; border-radius: 4px;\">");
+        html.append("Please ensure the book is returned by the due date in good condition to avoid any fines.");
+        html.append("</p>");
+
+        if (!imagesURLS.isEmpty()) {
+            html.append("<div style=\"margin: 20px 0;\">");
+            html.append("<p>If you would like to see the condition of the book at the time of borrowing, you can view the following images:</p>");
+            html.append("<div style=\"display: flex; flex-wrap: wrap; gap: 10px;\">");
+            for (String url : imagesURLS) {
+                html.append("<div>");
+                html.append("<img src=\"").append(url).append("\" alt=\"Book condition\" ");
+                html.append("style=\"max-width: 300px; border: 1px solid #e2e8f0; border-radius: 4px; margin: 5px;\"/>");
+                html.append("</div>");
+            }
+            html.append("</div>");
+            html.append("</div>");
+        }
+
+        html.append("<p style=\"margin-top: 20px;\">If you have any questions, please contact the school library.</p>");
+
+        html.append("<p style=\"margin-top: 30px;\">");
+        html.append("Best regards,<br>");
+        html.append("School Library Team");
+        html.append("</p>");
+
+        html.append("</body></html>");
         return html.toString();
     }
 
     private String createReturnEmailPlainText(Student student, Book book, Set<String> imagesURLS, double amountOwed, Set<String> damages) {
         StringBuilder body = new StringBuilder();
         body.append("Dear Parent/Guardian,\n\n");
-        // ...rest of the plain text email content...
+        body.append("We have received the returned book from your child.\n\n");
+        body.append("Student Details:\n");
+        body.append("  Name: ").append(student.getFirstNames()).append(" ").append(student.getLastName()).append("\n");
+        body.append("  Student Number: ").append(student.getStudentNumber()).append("\n\n");
+        body.append("Book Details:\n");
+        body.append("  Title: ").append(book.getTitle()).append("\n");
+        body.append("  Author: ").append(book.getAuthor()).append("\n");
+        body.append("  Return Date: ").append(LocalDate.now()).append("\n\n");
+
+        if (amountOwed > 0) {
+            body.append("Damage Details:\n");
+            for (String tag : damages) {
+                body.append("  - ").append(tag).append("\n");
+            }
+            body.append("\n");
+            body.append("Total Amount Owed: $").append(String.format("%.2f", amountOwed)).append("\n");
+        } else {
+            body.append("The book has been returned in good condition. No fines are due.\n");
+        }
+
+        body.append("\nIf you would like to see the condition of the book upon return, you can view the following images:\n");
+        for (String url : imagesURLS) {
+            body.append("  ").append(url).append("\n");
+        }
+        body.append("\nIf you have any questions, please contact the school library.\n\n");
+        body.append("Best regards,\n");
+        body.append("School Library Team");
         return body.toString();
     }
 
     private String createReturnEmailHtml(Student student, Book book, Set<String> imagesURLS, double amountOwed, Set<String> damages) {
         StringBuilder html = new StringBuilder();
+        html.append("<html><body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">");
+
         html.append("<p>Dear Parent/Guardian,</p>");
-        // ...rest of the HTML email content...
+        html.append("<p>We have received the returned book from your child.</p>");
+
+        html.append("<div style=\"margin: 20px 0;\">");
+        html.append("<h3 style=\"color: #2c5282;\">Student Details:</h3>");
+        html.append("<ul style=\"list-style-type: none; padding-left: 20px;\">");
+        html.append("<li><strong>Name:</strong> ").append(student.getFirstNames()).append(" ").append(student.getLastName()).append("</li>");
+        html.append("<li><strong>Student Number:</strong> ").append(student.getStudentNumber()).append("</li>");
+        html.append("</ul>");
+        html.append("</div>");
+
+        html.append("<div style=\"margin: 20px 0;\">");
+        html.append("<h3 style=\"color: #2c5282;\">Book Details:</h3>");
+        html.append("<ul style=\"list-style-type: none; padding-left: 20px;\">");
+        html.append("<li><strong>Title:</strong> ").append(book.getTitle()).append("</li>");
+        html.append("<li><strong>Author:</strong> ").append(book.getAuthor()).append("</li>");
+        html.append("<li><strong>Return Date:</strong> ").append(LocalDate.now()).append("</li>");
+        html.append("</ul>");
+        html.append("</div>");
+
+        if (amountOwed > 0) {
+            html.append("<div style=\"color: #744210; background-color: #fefcbf; padding: 15px; border-radius: 4px; margin: 20px 0;\">");
+            html.append("<h4 style=\"margin: 0;\">Damage Details:</h4>");
+            html.append("<ul style=\"list-style-type: none; padding-left: 20px; margin: 10px 0;\">");
+            for (String tag : damages) {
+                html.append("<li>").append(tag).append("</li>");
+            }
+            html.append("</ul>");
+            html.append("<p style=\"margin: 0;\">Total Amount Owed: <strong>$").append(String.format("%.2f", amountOwed)).append("</strong></p>");
+            html.append("</div>");
+        } else {
+            html.append("<p style=\"color: #2f855a;\">The book has been returned in good condition. No fines are due.</p>");
+        }
+
+        if (!imagesURLS.isEmpty()) {
+            html.append("<div style=\"margin: 20px 0;\">");
+            html.append("<p>If you would like to see the condition of the book upon return, you can view the following images:</p>");
+            html.append("<div style=\"display: flex; flex-wrap: wrap; gap: 10px;\">");
+            for (String url : imagesURLS) {
+                html.append("<div>");
+                html.append("<img src=\"").append(url).append("\" alt=\"Book condition\" ");
+                html.append("style=\"max-width: 300px; border: 1px solid #e2e8f0; border-radius: 4px; margin: 5px;\"/>");
+                html.append("</div>");
+            }
+            html.append("</div>");
+            html.append("</div>");
+        }
+
+        html.append("<p style=\"margin-top: 20px;\">If you have any questions, please contact the school library.</p>");
+
+        html.append("<p style=\"margin-top: 30px;\">");
+        html.append("Best regards,<br>");
+        html.append("School Library Team");
+        html.append("</p>");
+
+        html.append("</body></html>");
         return html.toString();
     }
 

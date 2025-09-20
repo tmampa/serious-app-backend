@@ -7,7 +7,9 @@ import java.util.Set;
 
 @Data
 public class StudentRequest {
-    private String fullName;
+    private String firstNames;
+    private String lastName;
+    private String email;
     private Long studentNumber;
     private String username;
     private String password;

@@ -115,7 +115,9 @@ public class AdminController {
         Student student = new Student();
         Set<Email> emailSet = new java.util.HashSet<>();
 
-        //student.setFullName(studentRequest.getFullName());
+        student.setFirstNames(studentRequest.getFirstNames());
+        student.setLastName(studentRequest.getLastName());
+        student.setEmail(studentRequest.getEmail());
         student.setStudentNumber(studentRequest.getStudentNumber());
         student.setUsername(studentRequest.getUsername());
         student.setPassword(studentRequest.getPassword());
@@ -130,7 +132,6 @@ public class AdminController {
             emailSet.add(newEmail);
         });
         student.setEmails(emailSet);
-       // student.setPhoneNumbers(studentRequest.getPhoneNumbers());
         var savedStudent = studentService.createStudent(student);
         return ResponseEntity.ok(savedStudent);
     }
@@ -138,7 +139,6 @@ public class AdminController {
     @PostMapping("/create-admin")
     public ResponseEntity<?> registerNewAdmin(@RequestBody AdminRequest adminRequest){
         Admin admin = new Admin();
-        //admin.setFullName(adminRequest.getFullName());
         admin.setUsername(adminRequest.getUsername());
         admin.setPassword(adminRequest.getPassword());
         admin.setEmail(adminRequest.getEmail());

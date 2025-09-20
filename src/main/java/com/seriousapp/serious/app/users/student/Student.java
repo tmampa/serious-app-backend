@@ -18,6 +18,7 @@ import lombok.Setter;
 public class Student extends User {
     private String firstNames;
     private String lastName;
+    private String email;
     private Long studentNumber;
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Email> emails = new HashSet<>();
