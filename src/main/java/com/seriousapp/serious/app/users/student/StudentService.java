@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.seriousapp.serious.app.borrowing.BorrowingRecord;
 import com.seriousapp.serious.app.borrowing.BorrowingRecordService;
 import com.seriousapp.serious.app.contact.Email;
+import com.seriousapp.serious.app.contact.EmailRequest;
 import com.seriousapp.serious.app.contact.EmailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -187,57 +188,6 @@ public class StudentService {
         return records.stream()
                 .map(BorrowingRecord::getBook)
                 .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public Student getStudent(UserRequest userRequest) {
-        // Find or create student
-        Student student = this.studentRepository.findByFullName(userRequest.getFullName())
-                .or(() -> this.studentRepository.findByStudentNumber(userRequest.getStudentNumber()))
-                .orElse(new Student());
-
-        // Update basic student information
-        //student.setFullName(userRequest.getFullName());
-        student.setStudentNumber(userRequest.getStudentNumber());
-        student.setAddress(userRequest.getAddress());
-        student.setOutstandingFines(0);
-
-        // Save student first to ensure it has an ID
-        student = studentRepository.save(student);
-
-        // Clear existing emails to prevent concurrent modification
-        student.getEmails().clear();
-
-        // Process each email from the request
-        for (Email email : userRequest.getEmails()) {
-            if (email.getId() != null) {
-                // Try to find existing email if ID is provided
-                Email existingEmail = emailService.findById(email.getId());
-                if (existingEmail != null) {
-                    // Update existing email
-                    existingEmail.setEmail(email.getEmail());
-                    existingEmail.setName(email.getName());
-                    existingEmail.setRelationship(email.getRelationship());
-                    existingEmail.setStudent(student);
-                    emailService.saveEmail(existingEmail);
-                    student.getEmails().add(existingEmail);
-                    continue;
-                }
-            }
-
-            // Handle new email
-            Email newEmail = new Email();
-            newEmail.setEmail(email.getEmail());
-            newEmail.setName(email.getName());
-            newEmail.setRelationship(email.getRelationship());
-            newEmail.setStudent(student);
-            Email savedEmail = emailService.saveEmail(newEmail);
-            student.getEmails().add(savedEmail);
-        }
-
-
-        // Final save to ensure all relationships are properly persisted
-        return studentRepository.save(student);
     }
 
     public Student saveStudent(Student student) {

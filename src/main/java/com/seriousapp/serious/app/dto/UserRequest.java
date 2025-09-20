@@ -4,12 +4,13 @@ import java.util.Set;
 
 import com.seriousapp.serious.app.contact.Email;
 
+import com.seriousapp.serious.app.contact.EmailRequest;
 import lombok.Data;
 
 @Data
 public class UserRequest {
     private String fullName;
     private Long studentNumber;
-    private Set<Email> emails = new java.util.HashSet<>();
+    private Set<EmailRequest> emails = new java.util.HashSet<>();
     private String address;
 }
