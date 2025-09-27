@@ -36,4 +36,6 @@ public class BorrowingRecord {
 
     @ElementCollection
     private Set<String> tags = new HashSet<>();
+
+    private Long barcode;
 }
