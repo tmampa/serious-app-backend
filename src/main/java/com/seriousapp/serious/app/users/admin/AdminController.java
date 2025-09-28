@@ -112,8 +112,10 @@ public class AdminController {
     public ResponseEntity<Double> returnBook(
             @PathVariable Long studentNumber,
             @PathVariable String bookTitle,
-            @RequestParam("images") List<MultipartFile> images) {
-        double fineAmount = adminService.returnBook(studentNumber, bookTitle, images);
+            @RequestParam("images") List<MultipartFile> images,
+            @RequestParam List<String> knownTags
+    ) {
+        double fineAmount = adminService.returnBook(studentNumber, bookTitle, images, knownTags);
         return ResponseEntity.ok(fineAmount);
     }
 

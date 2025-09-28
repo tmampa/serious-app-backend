@@ -161,7 +161,7 @@ public class AdminService {
         return savedRecord;
     }
 
-    public double returnBook(Long studentNumber, String bookTitle, List<MultipartFile> images) {
+    public double returnBook(Long studentNumber, String bookTitle, List<MultipartFile> images, List<String> knownTags) {
         var bookBeingReturned = studentService.returnBook(studentNumber, bookTitle);
 
         String containerNameBase = String.format("%s-%s-%d-%s-%s",
@@ -187,6 +187,10 @@ public class AdminService {
 
         for (MultipartFile image : images) {
             processAndAnalyzeImage(image, blobContainerClient, client, computerVisionTags, imagesURLS);
+        }
+
+        if (knownTags != null) {
+            computerVisionTags.addAll(knownTags);
         }
 
         double amountOwed = calculateDamageFines(computerVisionTags, bookBeingReturned.getTags());
