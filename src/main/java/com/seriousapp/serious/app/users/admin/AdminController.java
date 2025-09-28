@@ -297,6 +297,8 @@ public class AdminController {
         return ResponseEntity.ok(bookResponses);
     }
 
+
+
     @GetMapping("/borrow-records")
     public ResponseEntity<?> getAllBorrowRecords() {
         var records = this.borrowingRecordService.getAllBorrowRecords();
@@ -354,6 +356,15 @@ public class AdminController {
     public ResponseEntity<Void> deleteStudent(@PathVariable Long studentId) {
         studentService.deleteStudentById(studentId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/book/{bookId}")
+    public ResponseEntity<?> updateBook(@PathVariable Long bookId, @RequestBody BookRequest bookRequest) {
+        Book updatedBook = bookService.updateBook(bookId, bookRequest);
+        if (updatedBook == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedBook);
     }
 
     private void sendLoginCredentialsEmail(List<String> emails, String username, String password, String recipientType) {
