@@ -349,6 +349,12 @@ public class AdminController {
         return ResponseEntity.ok(studentResponses);
     }
 
+    @DeleteMapping("/student/delete/{studentId}")
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long studentId) {
+        studentService.deleteStudentById(studentId);
+        return ResponseEntity.noContent().build();
+    }
+
     private void sendLoginCredentialsEmail(List<String> emails, String username, String password, String recipientType) {
         String subject = "Library System - Login Credentials";
         String plainText = String.format("""

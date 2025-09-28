@@ -242,4 +242,8 @@ public class StudentService {
     public Optional<Student> getStudentByStudentNumber(Long studentNumber) {
         return studentRepository.findByStudentNumber(studentNumber);
     }
+
+    public void deleteStudentById(Long studentId) {
+        studentRepository.deleteById(studentId);
+    }
 }
