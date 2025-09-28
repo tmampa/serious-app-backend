@@ -118,8 +118,9 @@ public class AdminService {
                   .substring(0, Math.min(name.length(), 63));
     }
 
-    public BorrowingRecord uploadBorrowImages(Long recordId, List<MultipartFile> images) {
+    public BorrowingRecord uploadBorrowImages(Long recordId, List<MultipartFile> images, List<String> knownTags) {
         var record = borrowingRecordService.findById(recordId);
+
         if (record.isEmpty()) {
             throw new RuntimeException("Record not found");
         }
@@ -145,6 +146,10 @@ public class AdminService {
 
         for (MultipartFile image : images) {
             processAndAnalyzeImage(image, blobContainerClient, client, computerVisionTags, imagesURLS);
+        }
+
+        if (knownTags != null) {
+            computerVisionTags.addAll(knownTags);
         }
 
         record.get().setImages(imagesURLS);

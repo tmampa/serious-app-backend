@@ -102,8 +102,10 @@ public class AdminController {
     @PostMapping("/books/upload-images/{recordId}")
     public ResponseEntity<BorrowingRecord> uploadBorrowImages(
             @PathVariable Long recordId,
-            @RequestParam("images") List<MultipartFile> images) {
-        return ResponseEntity.ok(adminService.uploadBorrowImages(recordId, images));
+            @RequestParam("images") List<MultipartFile> images,
+            @RequestParam List<String> knownTags
+    ) {
+        return ResponseEntity.ok(adminService.uploadBorrowImages(recordId, images, knownTags));
     }
 
     @PostMapping("/books/return/{studentNumber}/{bookTitle}")
