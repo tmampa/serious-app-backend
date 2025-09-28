@@ -14,11 +14,7 @@ public class BookRequest {
     private String publisher;
     private int pages;
     private String language;
-    private String description;
     private double price;
     private String coverImageUrl;
     private Long grade;
-    private String genre;
-    private String barcode;
-
 }

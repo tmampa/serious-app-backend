@@ -21,13 +21,10 @@ public class Book {
     private String author;
     private String isbn;
     private Long grade;
-    private String barcode;
     private int publishedYear;
     private String publisher;
     private int pages;
     private String language;
-    private String genre;
-    private String description;
     private double price;
     private String coverImageUrl;
 
