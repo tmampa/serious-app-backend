@@ -58,7 +58,7 @@ public class AdminController {
 
     @Operation(
         summary = "Create a new book",
-        description = "Adds a new book to the library system"
+        description = "Adds a new book to the School Textbook Tracking Application"
     )
     @ApiResponse(responseCode = "200", description = "Book successfully created")
     @ApiResponse(responseCode = "400", description = "Invalid book data provided")
@@ -368,9 +368,9 @@ public class AdminController {
     }
 
     private void sendLoginCredentialsEmail(List<String> emails, String username, String password, String recipientType) {
-        String subject = "Library System - Login Credentials";
+        String subject = "School Textbook Tracking Application - Login Credentials";
         String plainText = String.format("""
-            Welcome to the Library System!
+            Welcome to the School Textbook Tracking Application!
             
             Here are the login credentials for %s:
             Username: %s
@@ -379,19 +379,19 @@ public class AdminController {
             Please change your password upon first login.
             
             Best regards,
-            Library System Team
+            School Textbook Tracking Application Team
             """, recipientType, username, password);
 
         String htmlBody = String.format("""
             <html>
             <body>
-                <h2>Welcome to the Library System!</h2>
+                <h2>Welcome to the School Textbook Tracking Application!</h2>
                 <p>Here are the login credentials for %s:</p>
                 <p><strong>Username:</strong> %s</p>
                 <p><strong>Password:</strong> %s</p>
                 <p>Please change your password upon first login.</p>
                 <br>
-                <p>Best regards,<br>Library System Team</p>
+                <p>Best regards,<br>School Textbook Tracking Application Team</p>
             </body>
             </html>
             """, recipientType, username, password);
