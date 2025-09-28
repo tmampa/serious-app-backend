@@ -16,7 +16,7 @@ public class StudentResponse {
     private Long id;
     private String fullName;
     private Long studentNumber;
-    private String username;
+    private String email;
     private String role;
     private Set<ParentResponse> parents;
     private String address;

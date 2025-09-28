@@ -201,7 +201,7 @@ public class AdminController {
             .id(savedStudent.getId())
             .fullName(savedStudent.getFirstNames() + " " + savedStudent.getLastName())
             .studentNumber(savedStudent.getStudentNumber())
-            .username(savedStudent.getUsername())
+            .email(savedStudent.getUsername())
             .role("STUDENT")
             .parents(parentResponses)
             .address(savedStudent.getAddress())
@@ -228,8 +228,8 @@ public class AdminController {
         student.setAddress(studentRequest.getAddress());
         student.setOutstandingFines(studentRequest.getOutstandingFines());
 
-        // Update parents
-        Set<Parent> newParents = new java.util.HashSet<>();
+        // Update parents (fix orphan removal issue)
+        student.getParents().clear();
         if (studentRequest.getParents() != null) {
             studentRequest.getParents().forEach(parentDto -> {
                 Parent parent = new Parent();
@@ -237,10 +237,9 @@ public class AdminController {
                 parent.setName(parentDto.getName());
                 parent.setRelationship(parentDto.getRelationship());
                 parent.setStudent(student);
-                newParents.add(parent);
+                student.getParents().add(parent);
             });
         }
-        student.setParents(newParents);
 
         Student updatedStudent = studentService.saveStudent(student);
 
@@ -257,7 +256,7 @@ public class AdminController {
             .id(updatedStudent.getId())
             .fullName(updatedStudent.getFirstNames() + " " + updatedStudent.getLastName())
             .studentNumber(updatedStudent.getStudentNumber())
-            .username(updatedStudent.getUsername())
+            .email(updatedStudent.getUsername())
             .role("STUDENT")
             .parents(parentResponses)
             .address(updatedStudent.getAddress())
@@ -339,7 +338,7 @@ public class AdminController {
                     .id(student.getId())
                     .fullName(student.getFirstNames() + " " + student.getLastName())
                     .studentNumber(student.getStudentNumber())
-                    .username(student.getUsername())
+                    .email(student.getUsername())
                     .role("STUDENT")
                     .parents(parentResponses)
                     .address(student.getAddress())
