@@ -19,6 +19,7 @@ import com.seriousapp.serious.app.utils.PasswordGenerator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/admin")
 //@PreAuthorize("hasRole('ADMIN')")
@@ -134,14 +136,19 @@ public class AdminController {
         String generatedPassword = passwordGenerator.generateSecurePassword();
 
         // Set User properties first
-        student.setUsername(studentRequest.getUsername());
+        student.setUsername(studentRequest.getEmail());
         student.setPassword(generatedPassword); // Use generated password instead
         student.setEmail(studentRequest.getEmail());
 
         // Set Student-specific properties
         student.setFirstNames(studentRequest.getFirstNames());
         student.setLastName(studentRequest.getLastName());
-        student.setStudentNumber(studentRequest.getStudentNumber());
+
+        long generatedStudentNumber = 1_000_000_000L + (long) (Math.random() * 9_000_000_000L);
+
+        log.info("Generated new student number: " + generatedStudentNumber);
+
+        student.setStudentNumber(generatedStudentNumber);
         student.setAddress(studentRequest.getAddress());
         student.setOutstandingFines(studentRequest.getOutstandingFines());
 
@@ -200,6 +207,62 @@ public class AdminController {
             .address(savedStudent.getAddress())
             .outstandingFines(savedStudent.getOutstandingFines())
             .borrowedBooks(savedStudent.getBorrowedBooks())
+            .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/student/{studentId}")
+    public ResponseEntity<?> updateStudent(
+            @PathVariable Long studentId,
+            @RequestBody StudentRequest studentRequest) {
+        Student student = studentService.findById(studentId);
+        if (student == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        student.setUsername(studentRequest.getEmail());
+        student.setEmail(studentRequest.getEmail());
+        student.setFirstNames(studentRequest.getFirstNames());
+        student.setLastName(studentRequest.getLastName());
+        student.setAddress(studentRequest.getAddress());
+        student.setOutstandingFines(studentRequest.getOutstandingFines());
+
+        // Update parents
+        Set<Parent> newParents = new java.util.HashSet<>();
+        if (studentRequest.getParents() != null) {
+            studentRequest.getParents().forEach(parentDto -> {
+                Parent parent = new Parent();
+                parent.setEmail(parentDto.getEmail());
+                parent.setName(parentDto.getName());
+                parent.setRelationship(parentDto.getRelationship());
+                parent.setStudent(student);
+                newParents.add(parent);
+            });
+        }
+        student.setParents(newParents);
+
+        Student updatedStudent = studentService.saveStudent(student);
+
+        Set<ParentResponse> parentResponses = updatedStudent.getParents().stream()
+            .map(parent -> ParentResponse.builder()
+                .id(parent.getId())
+                .name(parent.getName())
+                .email(parent.getEmail())
+                .relationship(parent.getRelationship())
+                .build())
+            .collect(java.util.stream.Collectors.toSet());
+
+        StudentResponse response = StudentResponse.builder()
+            .id(updatedStudent.getId())
+            .fullName(updatedStudent.getFirstNames() + " " + updatedStudent.getLastName())
+            .studentNumber(updatedStudent.getStudentNumber())
+            .username(updatedStudent.getUsername())
+            .role("STUDENT")
+            .parents(parentResponses)
+            .address(updatedStudent.getAddress())
+            .outstandingFines(updatedStudent.getOutstandingFines())
+            .borrowedBooks(updatedStudent.getBorrowedBooks())
             .build();
 
         return ResponseEntity.ok(response);

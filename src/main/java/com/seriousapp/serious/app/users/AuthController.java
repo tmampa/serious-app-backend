@@ -34,12 +34,12 @@ public class AuthController {
         try {
             authentication = this.authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginRequest.getUsername(),
+                            loginRequest.getEmail(),
                             loginRequest.getPassword()
                     )
             );
         } catch (AuthenticationException e) {
-            log.error("Authentication failed for user: {}", loginRequest.getUsername(), e);
+            log.error("Authentication failed for user: {}", loginRequest.getEmail(), e);
             throw new RuntimeException(e);
         }
 
