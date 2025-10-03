@@ -195,7 +195,8 @@ public class AdminService {
 
         double amountOwed = calculateDamageFines(computerVisionTags, bookBeingReturned.getTags());
 
-        bookBeingReturned.getStudent().setOutstandingFines(amountOwed);
+        double existingFines = bookBeingReturned.getStudent().getOutstandingFines();
+        bookBeingReturned.getStudent().setOutstandingFines(existingFines + amountOwed);
         studentService.saveStudent(bookBeingReturned.getStudent());
 
         sendReturnEmail(bookBeingReturned, imagesURLS, amountOwed, computerVisionTags);
