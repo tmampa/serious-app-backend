@@ -40,4 +40,8 @@ public class BookService {
         book.setCoverImageUrl(bookRequest.getCoverImageUrl());
         return bookRepository.save(book);
     }
+
+    public void deleteBook(Long bookId) {
+        bookRepository.deleteById(bookId);
+    }
 }

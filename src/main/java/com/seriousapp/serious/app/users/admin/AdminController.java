@@ -367,6 +367,12 @@ public class AdminController {
         return ResponseEntity.ok(updatedBook);
     }
 
+    @DeleteMapping("/book/delete/{bookId}")
+    public ResponseEntity<?> deleteBook(@PathVariable Long bookId) {
+        bookService.deleteBook(bookId);
+        return ResponseEntity.ok("Book deleted successfully");
+    }
+
     private void sendLoginCredentialsEmail(List<String> emails, String username, String password, String recipientType) {
         String subject = "School Textbook Tracking Application - Login Credentials";
         String plainText = String.format("""
