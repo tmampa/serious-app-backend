@@ -194,7 +194,12 @@ public class AdminService {
             computerVisionTags.addAll(knownTags);
         }
 
-        double amountOwed = calculateDamageFines(computerVisionTags, bookBeingReturned.getTags());
+        double amountOwed;
+        if (computerVisionTags.contains("Lost") || computerVisionTags.contains("lost")) {
+            amountOwed = bookBeingReturned.getBook().getPrice();
+        } else {
+            amountOwed = calculateDamageFines(computerVisionTags, bookBeingReturned.getTags());
+        }
 
         double existingFines = bookBeingReturned.getStudent().getOutstandingFines();
         bookBeingReturned.getStudent().setOutstandingFines(existingFines + amountOwed);
