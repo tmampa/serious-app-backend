@@ -316,6 +316,8 @@ public class AdminController {
             borrowRecordResponse.setReturnDate(record.getReturnDate());
             //borrowRecordResponse.setFineAmount(record.getFineAmount());
             borrowRecordResponse.setBarcode(record.getBarcode());
+            borrowRecordResponse.setImages(record.getImages());
+            borrowRecordResponse.setTags(record.getTags());
             borrowingRecords.add(borrowRecordResponse);
         }
 

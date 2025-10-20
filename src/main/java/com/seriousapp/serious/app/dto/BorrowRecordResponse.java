@@ -3,6 +3,8 @@ package com.seriousapp.serious.app.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class BorrowRecordResponse {
@@ -20,6 +22,8 @@ public class BorrowRecordResponse {
     private LocalDate returnDate;
     private double fineAmount;
     private long barcode;
+    private Set<String> images = new HashSet<>();
+    private Set<String> tags = new HashSet<>();
 
     public BorrowRecordResponse() {}
 
