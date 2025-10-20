@@ -19,6 +19,7 @@ public class BorrowRecordResponse {
     private LocalDate dueDate;
     private LocalDate returnDate;
     private double fineAmount;
+    private long barcode;
 
     public BorrowRecordResponse() {}
 
