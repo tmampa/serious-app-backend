@@ -137,9 +137,7 @@ public class AdminController {
         String generatedPassword = passwordGenerator.generateSecurePassword();
 
         // Set User properties first
-        student.setUsername(studentRequest.getEmail());
         student.setPassword(generatedPassword); // Use generated password instead
-        student.setEmail(studentRequest.getEmail());
 
         // Set Student-specific properties
         student.setFirstNames(studentRequest.getFirstNames());
@@ -149,6 +147,8 @@ public class AdminController {
 
         log.info("Generated new student number: " + generatedStudentNumber);
 
+        student.setUsername(String.valueOf(generatedStudentNumber));
+        student.setEmail(String.valueOf(generatedStudentNumber));
         student.setStudentNumber(generatedStudentNumber);
         student.setAddress(studentRequest.getAddress());
         student.setOutstandingFines(studentRequest.getOutstandingFines());
@@ -168,12 +168,12 @@ public class AdminController {
         var savedStudent = studentService.saveStudent(student);
 
         // Send email to student
-        sendLoginCredentialsEmail(
-            List.of(student.getEmail()),
-            student.getUsername(),
-            generatedPassword,
-            "Student"
-        );
+//        sendLoginCredentialsEmail(
+//            List.of(student.getEmail()),
+//            student.getUsername(),
+//            generatedPassword,
+//            "Student"
+//        );
 
         // Send email to parents
         List<String> parentEmails = savedStudent.getParents().stream()
