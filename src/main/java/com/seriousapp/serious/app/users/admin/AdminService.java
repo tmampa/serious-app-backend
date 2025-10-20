@@ -91,6 +91,7 @@ public class AdminService {
         record.setBook(book);
         record.setBorrowDate(borrowDate);
         record.setReturnDate(userRequest.getReturnDate());
+        record.setBarcode(userRequest.getBarcode());
 
         BorrowRecordResponse borrowRecordResponse = new BorrowRecordResponse();
 
