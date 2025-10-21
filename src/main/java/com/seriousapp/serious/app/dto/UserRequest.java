@@ -12,6 +12,6 @@ public class UserRequest {
     private Long studentNumber;
     private Set<ParentRequest> emails = new java.util.HashSet<>();
     private String address;
-    private LocalDate returnDate;
+    private LocalDate dueDate;
     private long barcode;
 }

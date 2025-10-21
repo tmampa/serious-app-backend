@@ -90,7 +90,7 @@ public class AdminService {
         record.setStudent(student.get());
         record.setBook(book);
         record.setBorrowDate(borrowDate);
-        record.setReturnDate(userRequest.getReturnDate());
+        record.setDueDate(userRequest.getDueDate());
         record.setBarcode(userRequest.getBarcode());
 
         BorrowRecordResponse borrowRecordResponse = new BorrowRecordResponse();

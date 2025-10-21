@@ -30,6 +30,7 @@ public class BorrowingRecord {
 
     private LocalDate borrowDate;
     private LocalDate returnDate;
+    private LocalDate dueDate;
 
     @ElementCollection
     private Set<String> images = new HashSet<>();

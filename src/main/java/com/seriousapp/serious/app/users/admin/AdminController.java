@@ -312,7 +312,7 @@ public class AdminController {
             borrowRecordResponse.setStudentNumber(String.valueOf(record.getStudent().getStudentNumber()));
             borrowRecordResponse.setBookTitle(record.getBook().getTitle());
             borrowRecordResponse.setBorrowDate(record.getBorrowDate());
-           // borrowRecordResponse.setDueDate(record.getDueDate());
+            borrowRecordResponse.setDueDate(record.getDueDate());
             borrowRecordResponse.setReturnDate(record.getReturnDate());
             //borrowRecordResponse.setFineAmount(record.getFineAmount());
             borrowRecordResponse.setBarcode(record.getBarcode());
