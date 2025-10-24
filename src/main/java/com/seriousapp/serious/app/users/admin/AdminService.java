@@ -6,7 +6,6 @@ import com.azure.ai.vision.imageanalysis.models.ImageAnalysisOptions;
 import com.azure.ai.vision.imageanalysis.models.ImageAnalysisResult;
 import com.azure.ai.vision.imageanalysis.models.VisualFeatures;
 import com.azure.core.credential.KeyCredential;
-import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.models.BlobAccessPolicy;
 import com.azure.storage.blob.models.BlobSignedIdentifier;
@@ -31,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -147,7 +147,29 @@ public class AdminService {
                 .buildClient();
 
         for (MultipartFile image : images) {
-            processAndAnalyzeImage(image, blobContainerClient, client, computerVisionTags, imagesURLS);
+            String blobName = (image.getOriginalFilename() != null ? image.getOriginalFilename() : "unnamed-" + System.currentTimeMillis())
+                    .replaceAll("\\s+", "-")
+                    .toLowerCase();
+
+            var imageBlob = blobContainerClient.getBlobClient(blobName);
+
+            try {
+                imageBlob.deleteIfExists();
+                imageBlob.upload(image.getInputStream());
+                String imageUrl = imageBlob.getBlobUrl();
+                imagesURLS.add(imageUrl);
+
+                ImageAnalysisResult result = client.analyzeFromUrl(
+                        imageUrl,
+                        Collections.singletonList(VisualFeatures.TAGS),
+                        new ImageAnalysisOptions().setGenderNeutralCaption(true));
+
+                if (result.getTags() != null) {
+                    result.getTags().getValues().forEach(tag -> computerVisionTags.add(tag.getName()));
+                }
+            } catch (IOException e) {
+                log.error("Error uploading image to blob storage: {}", e.getMessage(), e);
+            }
         }
 
         if (knownTags != null) {
@@ -188,18 +210,50 @@ public class AdminService {
                 .buildClient();
 
         for (MultipartFile image : images) {
-            processAndAnalyzeImage(image, blobContainerClient, client, computerVisionTags, imagesURLS);
+            String blobName = (image.getOriginalFilename() != null ? image.getOriginalFilename() : "unnamed-" + System.currentTimeMillis())
+                    .replaceAll("\\s+", "-")
+                    .toLowerCase();
+
+            var imageBlob = blobContainerClient.getBlobClient(blobName);
+
+            try {
+                imageBlob.deleteIfExists();
+                imageBlob.upload(image.getInputStream());
+                String imageUrl = imageBlob.getBlobUrl();
+                imagesURLS.add(imageUrl);
+
+                ImageAnalysisResult result = client.analyzeFromUrl(
+                        imageUrl,
+                        Collections.singletonList(VisualFeatures.TAGS),
+                        new ImageAnalysisOptions().setGenderNeutralCaption(true));
+
+                if (result.getTags() != null) {
+                    result.getTags().getValues().forEach(tag -> computerVisionTags.add(tag.getName()));
+                }
+            } catch (IOException e) {
+                log.error("Error uploading image to blob storage: {}", e.getMessage(), e);
+            }
         }
 
         if (knownTags != null) {
             computerVisionTags.addAll(knownTags);
         }
 
+        var savedTags = bookBeingReturned.getTags().stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
+
+        var computerVisionAndKnowTagsInLowercase = computerVisionTags.stream()
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
+
+        computerVisionAndKnowTagsInLowercase.removeIf(savedTags::contains);
+
         double amountOwed;
-        if (computerVisionTags.contains("Lost") || computerVisionTags.contains("lost")) {
+        if (computerVisionAndKnowTagsInLowercase.contains("lost")) {
             amountOwed = bookBeingReturned.getBook().getPrice();
         } else {
-            amountOwed = calculateDamageFines(computerVisionTags, bookBeingReturned.getTags());
+            amountOwed = calculateDamageFines(computerVisionAndKnowTagsInLowercase);
         }
 
         double existingFines = bookBeingReturned.getStudent().getOutstandingFines();
@@ -211,46 +265,12 @@ public class AdminService {
         return amountOwed;
     }
 
-    private void processAndAnalyzeImage(MultipartFile image,
-                                      BlobContainerClient blobContainerClient,
-                                      ImageAnalysisClient client,
-                                      Set<String> computerVisionTags,
-                                      Set<String> imagesURLS) {
-        String blobName = (image.getOriginalFilename() != null ? image.getOriginalFilename() : "unnamed-" + System.currentTimeMillis())
-                .replaceAll("\\s+", "-")
-                .toLowerCase();
-        var imageBlob = blobContainerClient.getBlobClient(blobName);
-
-        try {
-            imageBlob.deleteIfExists();
-            imageBlob.upload(image.getInputStream());
-            String imageUrl = imageBlob.getBlobUrl();
-            imagesURLS.add(imageUrl);
-
-            ImageAnalysisResult result = client.analyzeFromUrl(
-                    imageUrl,
-                    Collections.singletonList(VisualFeatures.TAGS),
-                    new ImageAnalysisOptions().setGenderNeutralCaption(true));
-
-            if (result.getTags() != null) {
-                result.getTags().getValues().forEach(tag -> computerVisionTags.add(tag.getName()));
-            }
-        } catch (IOException e) {
-            log.error("Error uploading image to blob storage: {}", e.getMessage(), e);
-        }
-    }
-
-    private double calculateDamageFines(Set<String> newTags, Set<String> originalTags) {
+    private double calculateDamageFines(Set<String> newTags) {
         Map<String, Double> tagPrices = getDamageTagPrices();
         double defaultPrice = 9.99;
         double amountOwed = 0.0;
 
-        Set<String> damagesTags = new HashSet<>(newTags);
-        for (String tag : originalTags) {
-            damagesTags.removeIf(a -> a.equalsIgnoreCase(tag));
-        }
-
-        for (String tag : damagesTags) {
+        for (String tag : newTags) {
             amountOwed += tagPrices.getOrDefault(tag.toLowerCase(), defaultPrice);
         }
 
@@ -262,7 +282,6 @@ public class AdminService {
         tagPrices.put("missing book cover", 90.0);
         tagPrices.put("coffee stain", 20.0);
         tagPrices.put("torn pages", 50.0);
-        tagPrices.put("Lost", 100.0);
         tagPrices.put("water damage", 40.0);
         tagPrices.put("writing", 15.0);
         tagPrices.put("highlighting", 10.0);
