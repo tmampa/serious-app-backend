@@ -464,7 +464,7 @@ public class AdminService {
                 body.append("  - ").append(tag).append("\n");
             }
             body.append("\n");
-            body.append("Total Amount Owed: $").append(String.format("%.2f", amountOwed)).append("\n");
+            body.append("Total Amount Owed: R").append(String.format("%.2f", amountOwed)).append("\n");
         } else {
             body.append("The book has been returned in good condition. No fines are due.\n");
         }
@@ -511,7 +511,7 @@ public class AdminService {
                 html.append("<li>").append(tag).append("</li>");
             }
             html.append("</ul>");
-            html.append("<p style=\"margin: 0;\">Total Amount Owed: <strong>$").append(String.format("%.2f", amountOwed)).append("</strong></p>");
+            html.append("<p style=\"margin: 0;\">Total Amount Owed: <strong>R").append(String.format("%.2f", amountOwed)).append("</strong></p>");
             html.append("</div>");
         } else {
             html.append("<p style=\"color: #2f855a;\">The book has been returned in good condition. No fines are due.</p>");
