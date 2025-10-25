@@ -209,29 +209,34 @@ public class AdminService {
                 .credential(new KeyCredential(computerVisionKey))
                 .buildClient();
 
-        for (MultipartFile image : images) {
-            String blobName = (image.getOriginalFilename() != null ? image.getOriginalFilename() : "unnamed-" + System.currentTimeMillis())
-                    .replaceAll("\\s+", "-")
-                    .toLowerCase();
+        if (!images.isEmpty()) {
+            for (MultipartFile image : images) {
+                if (image.getOriginalFilename() == null) continue;
+                if (image.getOriginalFilename().isEmpty()) continue;
 
-            var imageBlob = blobContainerClient.getBlobClient(blobName);
+                String blobName = (image.getOriginalFilename() != null ? image.getOriginalFilename() : "unnamed-" + System.currentTimeMillis())
+                        .replaceAll("\\s+", "-")
+                        .toLowerCase();
 
-            try {
-                imageBlob.deleteIfExists();
-                imageBlob.upload(image.getInputStream());
-                String imageUrl = imageBlob.getBlobUrl();
-                imagesURLS.add(imageUrl);
+                var imageBlob = blobContainerClient.getBlobClient(blobName);
 
-                ImageAnalysisResult result = client.analyzeFromUrl(
-                        imageUrl,
-                        Collections.singletonList(VisualFeatures.TAGS),
-                        new ImageAnalysisOptions().setGenderNeutralCaption(true));
+                try {
+                    imageBlob.deleteIfExists();
+                    imageBlob.upload(image.getInputStream());
+                    String imageUrl = imageBlob.getBlobUrl();
+                    imagesURLS.add(imageUrl);
 
-                if (result.getTags() != null) {
-                    result.getTags().getValues().forEach(tag -> computerVisionTags.add(tag.getName()));
+                    ImageAnalysisResult result = client.analyzeFromUrl(
+                            imageUrl,
+                            Collections.singletonList(VisualFeatures.TAGS),
+                            new ImageAnalysisOptions().setGenderNeutralCaption(true));
+
+                    if (result.getTags() != null) {
+                        result.getTags().getValues().forEach(tag -> computerVisionTags.add(tag.getName()));
+                    }
+                } catch (IOException e) {
+                    log.error("Error uploading image to blob storage: {}", e.getMessage(), e);
                 }
-            } catch (IOException e) {
-                log.error("Error uploading image to blob storage: {}", e.getMessage(), e);
             }
         }
 
@@ -280,10 +285,9 @@ public class AdminService {
     private Map<String, Double> getDamageTagPrices() {
         Map<String, Double> tagPrices = new HashMap<>();
         tagPrices.put("missing book cover", 90.0);
-        tagPrices.put("coffee stain", 20.0);
         tagPrices.put("torn pages", 50.0);
         tagPrices.put("water damage", 40.0);
-        tagPrices.put("writing", 15.0);
+        tagPrices.put("writing/markings added", 15.0);
         tagPrices.put("highlighting", 10.0);
         tagPrices.put("bent cover", 25.0);
         tagPrices.put("bent pages", 15.0);
@@ -294,11 +298,11 @@ public class AdminService {
         tagPrices.put("loose pages", 35.0);
         tagPrices.put("mold", 60.0);
         tagPrices.put("tape", 10.0);
-        tagPrices.put("missing pages", 80.0);
+        tagPrices.put("pages missing", 80.0);
         tagPrices.put("burnt pages", 100.0);
         tagPrices.put("bent spine", 30.0);
         tagPrices.put("broken spine", 70.0);
-        tagPrices.put("stained cover", 25.0);
+        tagPrices.put("stains present", 8.0);
         tagPrices.put("dirty cover", 15.0);
         tagPrices.put("scratched pages", 20.0);
         tagPrices.put("ripped cover", 50.0);
@@ -316,16 +320,7 @@ public class AdminService {
         tagPrices.put("loose binding", 40.0);
         tagPrices.put("broken binding", 80.0);
         tagPrices.put("missing dust jacket", 30.0);
-        tagPrices.put("torn dust jacket", 20.0);
         tagPrices.put("damaged dust jacket", 25.0);
-        tagPrices.put("water stain", 30.0);
-        tagPrices.put("ink stain", 20.0);
-        tagPrices.put("food stain", 25.0);
-        tagPrices.put("grease stain", 20.0);
-        tagPrices.put("paint stain", 30.0);
-        tagPrices.put("glue stain", 15.0);
-        tagPrices.put("torn cover page", 50.0);
-        tagPrices.put("torn back cover", 50.0);
         tagPrices.put("damaged cover page", 30.0);
         tagPrices.put("damaged back cover", 30.0);
         tagPrices.put("loose cover", 40.0);
