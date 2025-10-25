@@ -267,7 +267,7 @@ public class AdminService {
 
     private double calculateDamageFines(Set<String> newTags) {
         Map<String, Double> tagPrices = getDamageTagPrices();
-        double defaultPrice = 9.99;
+        double defaultPrice = 0.0;
         double amountOwed = 0.0;
 
         for (String tag : newTags) {
