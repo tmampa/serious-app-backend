@@ -318,6 +318,7 @@ public class AdminController {
             borrowRecordResponse.setBarcode(record.getBarcode());
             borrowRecordResponse.setImages(record.getImages());
             borrowRecordResponse.setTags(record.getTags());
+            borrowRecordResponse.setReturnTags(record.getReturnTags());
             borrowingRecords.add(borrowRecordResponse);
         }
 

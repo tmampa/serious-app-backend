@@ -39,4 +39,7 @@ public class BorrowingRecord {
     private Set<String> tags = new HashSet<>();
 
     private Long barcode;
+
+    @ElementCollection
+    private Set<String> returnTags = new HashSet<>();
 }

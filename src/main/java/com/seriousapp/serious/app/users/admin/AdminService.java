@@ -186,7 +186,7 @@ public class AdminService {
     }
 
     public double returnBook(Long studentNumber, String bookTitle, List<MultipartFile> images, List<String> knownTags) {
-        var bookBeingReturned = studentService.returnBook(studentNumber, bookTitle);
+        var bookBeingReturned = studentService.returnBook(studentNumber, bookTitle, knownTags);
 
         String containerNameBase = String.format("%s-%s-%d-%s-%s",
             bookBeingReturned.getBook().getTitle(),

@@ -144,7 +144,7 @@ public class StudentService {
 
     }
 
-    public BorrowingRecord returnBook(Long studentNumber, String bookName) {
+    public BorrowingRecord returnBook(Long studentNumber, String bookName, List<String> tags) {
         Book book = bookService.getBookByName(bookName);
 
         Student student = this.studentRepository.findByStudentNumber(studentNumber)
@@ -162,6 +162,7 @@ public class StudentService {
 
         // Update return date
         record.setReturnDate(LocalDate.now());
+        record.setReturnTags(tags.stream().map(String::toLowerCase).collect(Collectors.toSet()));
 
         // Update book quantity
         this.bookService.saveBook(book);

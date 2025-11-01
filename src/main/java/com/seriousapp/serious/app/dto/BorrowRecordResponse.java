@@ -24,6 +24,7 @@ public class BorrowRecordResponse {
     private long barcode;
     private Set<String> images = new HashSet<>();
     private Set<String> tags = new HashSet<>();
+    private Set<String> returnTags = new HashSet<>();
 
     public BorrowRecordResponse() {}
 
